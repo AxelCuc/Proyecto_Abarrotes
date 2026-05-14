@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -28,25 +27,5 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
         });
-    }
-
-    /**
-     * Redirección personalizada después del login
-     */
-    protected function redirectTo($request): string
-    {
-        if (Auth::check()) {
-            $user = Auth::user();
-
-            if ($user->role === 'admin') {
-                return '/admin/dashboard';
-            }
-
-            if ($user->role === 'cajero') {
-                return '/cajero/dashboard';
-            }
-        }
-
-        return '/';
     }
 }

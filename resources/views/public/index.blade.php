@@ -48,6 +48,13 @@
 </header>
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
+        @if(session('error'))
+            <div class="mb-8 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
+                <p class="font-bold">Error de Autenticación</p>
+                <p>{{ session('error') }}</p>
+            </div>
+        @endif
+
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             @forelse($products as $product)
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative flex flex-col group hover:shadow-xl transition-all duration-300">

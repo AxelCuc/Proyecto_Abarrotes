@@ -24,7 +24,7 @@ Route::get('/admin/login', function () {
 })->name('admin.login');
 
 Route::get('/admin/dashboard', function () {
-    return view('admin.products.dashboard'); // tu dashboard existente
+    return view('admin.dashboard'); 
 })->middleware('auth')->name('admin.dashboard');
 
 // CRUD de productos (solo admin)

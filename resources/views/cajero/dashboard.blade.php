@@ -47,9 +47,14 @@
         </div>
 
         <div class="p-6 border-t border-gray-100">
-            <button class="w-full bg-[#0f763e] text-white py-3.5 rounded-xl font-bold hover:bg-[#0c6132] transition-colors shadow-md shadow-green-100">
-                Cerrar Turno
-            </button>
+            <form method="POST" action="{{ route('logout') }}">
+    @csrf
+    <button type="submit"
+        class="w-full bg-[#0f763e] text-white py-3.5 rounded-xl font-bold hover:bg-[#0c6132] transition-colors shadow-md shadow-green-100">
+        Cerrar Turno
+    </button>
+</form>
+
         </div>
     </aside>
 

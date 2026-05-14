@@ -11,13 +11,13 @@ class LoginResponse
         $user = Auth::user();
 
         if ($user->role === 'admin') {
-            return redirect()->intended('/admin/dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         if ($user->role === 'cajero') {
-            return redirect()->intended('/cajero/dashboard');
+            return redirect()->route('cajero.dashboard');
         }
 
-        return redirect()->intended('/');
+        return redirect()->route('home');
     }
 }

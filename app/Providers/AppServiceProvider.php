@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,8 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Aquí ya no necesitas binding con Fortify
-        // porque tu LoginResponse es independiente
+        //
     }
 
     /**
@@ -20,6 +21,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Cuando el middleware 'guest' intercepte a un usuario ya autenticado,
+        // redirigirlo al dashboard correspondiente según su rol.
+        RedirectIfAuthenticated::redirectUsing(function ($request) {
+            $user = Auth::user();
+
+            if ($user) {
+                $role = strtolower(trim((string)$user->role));
+                
+                if (in_array($role, ['admin', 'administrador'])) {
+                    return route('admin.dashboard');
+                }
+
+                if ($role === 'cajero') {
+                    return route('cajero.dashboard');
+                }
+            }
+
+            return route('home');
+        });
     }
 }

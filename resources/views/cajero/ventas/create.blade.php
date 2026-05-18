@@ -27,7 +27,7 @@
                 </div>
 
                 <nav class="p-4 space-y-1.5">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition-colors">
+                    <a href="{{ route('cajero.dashboard') }}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                         Inicio
                     </a>
@@ -35,11 +35,11 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                         Registrar Venta
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition-colors">
+                    <a href="{{ route('cajero.inventario.index') }}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                         Inventario
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition-colors">
+                    <a href="{{ route('cajero.ventas.index') }}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         Mis Ventas
                     </a>
@@ -59,11 +59,18 @@
                 <h2 class="text-xl font-bold text-gray-900">Categorías</h2>
             </div>
             <nav class="flex-1 overflow-y-auto p-4 space-y-1">
-                <a href="#" class="flex items-center justify-between px-4 py-2.5 bg-[#0f763e] text-white rounded-lg font-semibold shadow-sm">
+                
+                <a href="{{ route('cajero.ventas.categoria', 'todos') }}" 
+                   class="flex items-center justify-between px-4 py-2.5 rounded-lg transition-colors {{ is_null($categoriaSeleccionada) ? 'bg-[#0f763e] text-white font-semibold shadow-sm' : 'text-gray-600 hover:bg-gray-50 font-medium' }}">
                     <div class="flex items-center gap-3">Todos</div>
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg font-medium transition-colors">Alimentos</a>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg font-medium transition-colors">Bebidas</a>
+
+                @foreach($categorias as $categoria)
+                    <a href="{{ route('cajero.ventas.categoria', $categoria->id) }}" 
+                       class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors {{ ($categoriaSeleccionada && $categoriaSeleccionada->id == $categoria->id) ? 'bg-[#0f763e] text-white font-semibold shadow-sm' : 'text-gray-600 hover:bg-gray-50 font-medium' }}">
+                        {{ $categoria->nombre }}
+                    </a>
+                @endforeach
             </nav>
         </div>
 
@@ -72,23 +79,25 @@
             <header class="bg-white border-b border-gray-200 h-[72px] px-8 flex justify-end items-center shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="text-right hidden md:block">
-                        <p class="text-sm font-bold text-gray-800 leading-tight">{{ Auth::user()->name ?? 'Cajero' }}</p>
+                        <p class="text-sm font-bold text-gray-800 leading-tight">{{ Auth::user()->nombre ?? 'Cajero' }}</p>
                         <p class="text-xs text-gray-500">Caja 01</p>
                     </div>
                     <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold border border-gray-200">
-                        C
+                        {{ substr(Auth::user()->nombre ?? 'C', 0, 1) }}
                     </div>
                 </div>
             </header>
 
             <div class="flex-1 overflow-y-auto p-8 pb-32">
                 <div class="flex justify-between items-end mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900">Todos los productos</h2>
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        {{ $categoriaSeleccionada ? $categoriaSeleccionada->nombre : 'Todos los productos' }}
+                    </h2>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="contenedor-productos">
                     
-                    @forelse($products as $product)
+                    @forelse($productos as $product)
                         <div class="producto-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col" data-precio="{{ $product->precio }}">
                             
                             <div class="relative h-40 bg-gray-50 flex items-center justify-center p-4">
@@ -134,7 +143,7 @@
                         </div>
                     @empty
                         <div class="col-span-full py-10 text-center text-gray-500">
-                            No hay productos registrados en el inventario.
+                            No se encontraron productos para esta categoría.
                         </div>
                     @endforelse
 
@@ -177,14 +186,10 @@
                     granTotal += (precio * cantidad);
                 });
 
-                // Actualizar el texto en la barra inferior
                 displayTotal.innerText = '$' + granTotal.toFixed(2);
-
-                // Despachar evento para que Alpine.js actualice el valor dentro del Modal
                 window.dispatchEvent(new CustomEvent('total-actualizado', { detail: granTotal }));
             }
 
-            // Asignar eventos a los botones de + y -
             tarjetas.forEach(tarjeta => {
                 const btnSumar = tarjeta.querySelector('.btn-sumar');
                 const btnRestar = tarjeta.querySelector('.btn-restar');

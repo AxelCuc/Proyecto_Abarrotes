@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
             $user = Auth::user();
 
             if ($user) {
-                $role = strtolower(trim((string)$user->role));
+                $role = strtolower(trim((string)$user->rol->nombre ?? ''));
                 
                 if (in_array($role, ['admin', 'administrador'])) {
                     return route('admin.dashboard');

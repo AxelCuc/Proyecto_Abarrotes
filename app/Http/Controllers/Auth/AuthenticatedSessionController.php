@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        $role = strtolower(trim((string)$user->role));
+        $role = strtolower(trim((string)$user->rol->nombre ?? ''));
 
         if (in_array($role, ['admin', 'administrador'])) {
             return redirect()->route('admin.dashboard');
@@ -41,7 +41,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         // Fallback si no coincide, mostrar qué rol tenía para depurar si falla
-        return redirect()->route('home')->with('error', 'Rol no reconocido: ' . $user->role);
+        return redirect()->route('home')->with('error', 'Rol no reconocido: ' . $role);
     }
 
 

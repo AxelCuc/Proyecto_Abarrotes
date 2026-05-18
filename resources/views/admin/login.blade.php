@@ -29,17 +29,20 @@
             @csrf
             
             <div>
-                <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Correo Electrónico</label>
+                <label for="correo" class="block text-sm font-semibold text-gray-700 mb-2">Correo Electrónico</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                         </svg>
                     </span>
-                    <input type="email" name="email" id="email" required
+                    <input type="email" name="correo" id="correo" required
                         class="block w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all placeholder:text-gray-300"
-                        placeholder="admin@donpepe.com">
+                        placeholder="admin@donpepe.com" value="{{ old('correo') }}">
                 </div>
+                @error('correo')
+                    <p class="text-red-500 text-xs mt-2 font-semibold">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
@@ -57,6 +60,9 @@
                         class="block w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-gray-900 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all placeholder:text-gray-300"
                         placeholder="••••••••••••">
                 </div>
+                @error('password')
+                    <p class="text-red-500 text-xs mt-2 font-semibold">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="flex items-center">

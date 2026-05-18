@@ -10,14 +10,16 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    protected $table = 'usuarios';
+
     /**
      * Campos que se pueden asignar masivamente.
      */
     protected $fillable = [
-        'name',
-        'email',
+        'nombre',
+        'correo',
         'password',
-        'role', // 👈 agrega el campo role aquí
+        'rol_id',
     ];
 
     /**
@@ -32,7 +34,14 @@ class User extends Authenticatable
      * Casts de atributos.
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Obtener el rol asociado al usuario.
+     */
+    public function rol()
+    {
+        return $this->belongsTo(Role::class, 'rol_id');
+    }
 }

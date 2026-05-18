@@ -14,7 +14,7 @@ use App\Http\Controllers\InventarioController;
 
 // Ruta pública: muestra productos
 Route::get('/', function () {
-    $products = \App\Models\Product::all();
+    $products = \App\Models\Producto::all();
     return view('public.index', compact('products'));
 })->name('home');
 

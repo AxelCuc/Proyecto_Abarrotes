@@ -5,15 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Role extends Model
 {
     use HasFactory;
 
-    // Campos que se pueden asignar masivamente
+    protected $table = 'roles';
+    public $timestamps = false;
+
     protected $fillable = [
         'nombre',
-        'precio',
-        'cantidad',
-        'imagen',
     ];
+
+    public function usuarios()
+    {
+        return $this->hasMany(User::class, 'rol_id');
+    }
 }

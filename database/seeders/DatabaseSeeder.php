@@ -32,5 +32,12 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'rol_id' => $cajeroRole->id,
         ]);
+
+        // 3. Llamar al seeder de productos
+        $this->call(CategoriaSeeder::class);
+        $this->call(ProductoSeeder::class);
+
     }
 }
+
+

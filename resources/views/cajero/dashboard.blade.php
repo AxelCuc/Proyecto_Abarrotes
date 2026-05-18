@@ -23,12 +23,15 @@
                     Inicio
                 </a>
 
-                <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-xl font-medium transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                    </svg>
-                    Registrar Venta
-                </a>
+                <a href="{{ route('cajero.ventas.create') }}" 
+   class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-xl font-medium transition-colors">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+    </svg>
+    Registrar Venta
+</a>
+
 
                 <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-xl font-medium transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -171,20 +174,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="bg-green-900 rounded-[32px] h-48 relative overflow-hidden group mt-4">
-                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000" 
-                     alt="Pasillo de abarrotes" 
-                     class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-60">
-                
-                <div class="absolute bottom-8 left-10">
-                    <h3 class="text-2xl font-bold text-white tracking-wide">Calidad que se nota</h3>
-                </div>
-                
-                <button class="absolute bottom-6 right-8 w-14 h-14 bg-[#f26522] text-white rounded-full flex items-center justify-center hover:bg-orange-600 shadow-xl shadow-orange-900/50 text-3xl font-light transition-transform hover:scale-105">
-                    +
-                </button>
             </div>
 
         </div>

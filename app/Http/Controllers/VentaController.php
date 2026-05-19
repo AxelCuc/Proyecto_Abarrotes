@@ -49,7 +49,7 @@ class VentaController extends Controller
         // Crear venta principal
         $venta = Venta::create([
             'usuario_id' => Auth::id(),
-            'total'      => $request->input('total'),
+            'total'      => $request->input('total'), // ✅ ahora viene del input hidden
         ]);
 
         // Guardar detalles de productos
@@ -72,11 +72,13 @@ class VentaController extends Controller
             }
         }
 
-        return redirect()->route('cajero.ventas.ticket', $venta->id);
+        // ✅ Redirigir al dashboard del cajero con mensaje de éxito
+        return redirect()->route('cajero.dashboard')
+                         ->with('success', 'Venta registrada correctamente.');
     }
 
     /**
-     * Mostrar ticket de venta
+     * Mostrar ticket de venta (si lo quieres usar en lugar de dashboard)
      */
     public function ticket(Venta $venta)
     {

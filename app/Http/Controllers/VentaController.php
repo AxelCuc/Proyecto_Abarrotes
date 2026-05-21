@@ -106,7 +106,7 @@ class VentaController extends Controller
     public function ticket(Venta $venta)
     {
         $detalles = $venta->detalles; // relación con DetalleVenta
-        return view('cajero.ventas.ticket', compact('venta', 'detalles'));
+        return view('cajero.ventas.partials.modal-detalle', compact('venta', 'detalles'));
     }
 
     /**

@@ -18,7 +18,7 @@ class VentaController extends Controller
     {
         $categorias = Categoria::all();
         $productos = Producto::all();
-        $categoriaSeleccionada = null; //  siempre definida
+        $categoriaSeleccionada = null; // siempre definida
 
         return view('cajero.ventas.create', compact('categorias','productos','categoriaSeleccionada'));
     }
@@ -34,7 +34,7 @@ class VentaController extends Controller
             $productos = Producto::all();
             $categoriaSeleccionada = null;
         } elseif ($id === 'mas-vendidos') {
-            //  Productos más vendidos dinámicos
+            // Productos más vendidos dinámicos
             $productos = Producto::join('detalle_ventas', 'productos.id', '=', 'detalle_ventas.producto_id')
                 ->select('productos.*')
                 ->selectRaw('SUM(detalle_ventas.cantidad) as total_vendidos')
@@ -72,7 +72,7 @@ class VentaController extends Controller
         // Crear venta principal
         $venta = Venta::create([
             'usuario_id' => Auth::id(),
-            'total'      => $request->input('total'), //  ahora viene del input hidden
+            'total'      => $request->input('total'), // viene del input hidden
         ]);
 
         // Guardar detalles de productos
@@ -95,7 +95,7 @@ class VentaController extends Controller
             }
         }
 
-        //  Redirigir al dashboard del cajero con mensaje de éxito
+        // Redirigir al dashboard del cajero con mensaje de éxito
         return redirect()->route('cajero.dashboard')
                          ->with('success', 'Venta registrada correctamente.');
     }
@@ -110,7 +110,7 @@ class VentaController extends Controller
     }
 
     /**
-     * Historial de ventas del cajero (con paginación)
+     * Historial de ventas del cajero (Todas las ventas con paginación)
      */
     public function index()
     {
@@ -118,39 +118,28 @@ class VentaController extends Controller
             ->latest()
             ->paginate(10);
 
-        $periodo = 'todas'; // ✅ valor por defecto para evitar error en Blade
-
-        return view('cajero.ventas.index', compact('ventas', 'periodo'));
+        return view('cajero.ventas.index', compact('ventas'));
     }
 
     /**
-     * Filtro de ventas (Hoy, Semana, Mes, Todas)
+     * Filtro de ventas por rango de fechas
      */
-    public function filtro(string $periodo)
+    public function filtroRango(Request $request)
     {
-        $query = Venta::where('usuario_id', Auth::id());
+        $request->validate([
+            'fecha_inicio' => 'required|date',
+            'fecha_fin'    => 'required|date|after_or_equal:fecha_inicio',
+        ]);
 
-        switch ($periodo) {
-            case 'hoy':
-                $query->whereDate('created_at', today());
-                break;
+        $ventas = Venta::where('usuario_id', Auth::id())
+            ->whereBetween('created_at', [$request->fecha_inicio, $request->fecha_fin])
+            ->latest()
+            ->paginate(10);
 
-            case 'semana':
-                $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
-                break;
-
-            case 'mes':
-                $query->whereMonth('created_at', now()->month)
-                      ->whereYear('created_at', now()->year);
-                break;
-
-            case 'todas':
-                // No aplicamos ningún filtro de fecha
-                break;
-        }
-
-        $ventas = $query->latest()->paginate(10);
-
-        return view('cajero.ventas.index', compact('ventas', 'periodo'));
+        return view('cajero.ventas.index', [
+            'ventas' => $ventas,
+            'fecha_inicio' => $request->fecha_inicio,
+            'fecha_fin' => $request->fecha_fin,
+        ]);
     }
 }

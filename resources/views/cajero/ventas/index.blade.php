@@ -96,21 +96,37 @@
                 </div>
             </div>
 
-            <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 mb-6 flex items-center justify-between">
-                <div class="flex items-center gap-2">
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2 w-full md:w-auto">
                     @php
-                        $btnBase = "px-6 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-200";
+                        $btnBase = "inline-flex items-center justify-center px-6 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-200";
+                        // Comprobamos si no estamos en un rango de fechas para marcar 'Todas' como activo
+                        $esFiltroTodas = (!request()->has('fecha_inicio') && (!isset($periodo) || $periodo == 'todas'));
                         $btnActive = "bg-[#0f763e] text-white shadow-lg shadow-green-100";
-                        $btnInactive = "text-gray-400 hover:bg-gray-50 hover:text-gray-600";
+                        $btnInactive = "text-gray-400 bg-gray-50 hover:bg-gray-100 hover:text-gray-600";
                     @endphp
 
-                    <a href="{{ route('cajero.ventas.filtro', 'todas') }}" class="{{ $btnBase }} {{ $periodo == 'todas' ? $btnActive : $btnInactive }}">Todas</a>
-                    <a href="{{ route('cajero.ventas.filtro', 'hoy') }}" class="{{ $btnBase }} {{ $periodo == 'hoy' ? $btnActive : $btnInactive }}">Hoy</a>
-                    <a href="{{ route('cajero.ventas.filtro', 'semana') }}" class="{{ $btnBase }} {{ $periodo == 'semana' ? $btnActive : $btnInactive }}">Semana</a>
-                    <a href="{{ route('cajero.ventas.filtro', 'mes') }}" class="{{ $btnBase }} {{ $periodo == 'mes' ? $btnActive : $btnInactive }}">Mes</a>
+                    <a href="{{ route('cajero.ventas.index', 'todas') }}" class="{{ $btnBase }} {{ $esFiltroTodas ? $btnActive : $btnInactive }}">
+                        Todas las ventas
+                    </a>
                 </div>
-            </div>
 
+                <form action="{{ route('cajero.ventas.rango') }}" method="GET" class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <div class="flex items-center gap-2">
+                        <input type="date" name="fecha_inicio" id="fecha_inicio" required value="{{ request('fecha_inicio') }}" 
+                               class="px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-50 focus:border-[#0f763e] transition-colors">
+                        
+                        <span class="text-gray-400 font-black">-</span>
+                        
+                        <input type="date" name="fecha_fin" id="fecha_fin" required value="{{ request('fecha_fin') }}" 
+                               class="px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-50 focus:border-[#0f763e] transition-colors">
+                    </div>
+                    
+                    <button type="submit" class="px-6 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider bg-gray-800 text-white shadow-md hover:bg-gray-900 transition-all duration-200">
+                        Filtrar
+                    </button>
+                </form>
+            </div>
             <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
                 <table class="w-full text-left">
                     <thead>
@@ -177,7 +193,7 @@
             </div>
 
             <div class="mt-8">
-                {{ $ventas->links() }}
+                {{ $ventas->appends(request()->query())->links() }}
             </div>
 
         </div>

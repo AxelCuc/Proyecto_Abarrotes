@@ -51,7 +51,7 @@
     </aside>
 
     <main class="flex-1 flex flex-col h-full overflow-y-auto bg-[#f8fafc]">
-        <div class="p-8 pb-20 max-w-7xl mx-auto w-full">
+        <div class="p-8 pb-20 max-w-[95%] mx-auto w-full">
             
             <div class="flex flex-col gap-6 mb-10">
                 <div>

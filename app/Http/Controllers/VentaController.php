@@ -68,37 +68,41 @@ class VentaController extends Controller
      * Guardar la venta en BD
      */
     public function store(Request $request)
-    {
-        // Crear venta principal
-        $venta = Venta::create([
-            'usuario_id' => Auth::id(),
-            'total'      => $request->input('total'), // viene del input hidden
-        ]);
+{
+    // Crear venta principal
+    $venta = Venta::create([
+        'usuario_id' => Auth::id(),
+        'total'      => $request->input('total'), // viene del input hidden
+    ]);
 
-        // Guardar detalles de productos
-        foreach ($request->input('productos', []) as $productoId => $datos) {
-            $cantidad = $datos['cantidad'] ?? 0;
-            $precio   = $datos['precio'] ?? 0;
+    // Guardar detalles de productos
+    foreach ($request->input('productos', []) as $productoId => $datos) {
+        $cantidad = $datos['cantidad'] ?? 0;
 
-            if ($cantidad > 0) {
-                $producto = Producto::find($productoId);
+        if ($cantidad > 0) {
+            $producto = Producto::find($productoId);
 
-                DetalleVenta::create([
-                    'venta_id'    => $venta->id,
-                    'producto_id' => $producto->id,
-                    'cantidad'    => $cantidad,
-                    'subtotal'    => $precio * $cantidad,
-                ]);
+            // Obtener precio vigente del producto
+            $precioUnitario = $producto->precioActual->precio ?? 0;
 
-                // Descontar stock
-                $producto->decrement('stock', $cantidad);
-            }
+            DetalleVenta::create([
+                'venta_id'       => $venta->id,
+                'producto_id'    => $producto->id,
+                'cantidad'       => $cantidad,
+                'precio_unitario'=> $precioUnitario,
+                'subtotal'       => $cantidad * $precioUnitario,
+            ]);
+
+            // Descontar stock
+            $producto->decrement('stock', $cantidad);
         }
-
-        // Redirigir al dashboard del cajero con mensaje de éxito
-        return redirect()->route('cajero.dashboard')
-                         ->with('success', 'Venta registrada correctamente.');
     }
+
+    // Redirigir al dashboard del cajero con mensaje de éxito
+    return redirect()->route('cajero.dashboard')
+                     ->with('success', 'Venta registrada correctamente.');
+}
+
 
     /**
      * Mostrar ticket de venta

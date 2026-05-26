@@ -9,13 +9,21 @@
 </head>
 <body class="bg-[#f8fafc] flex h-screen overflow-hidden font-sans text-gray-800">
 
+    {{-- =====================================================================
+         FORM PRINCIPAL: envuelve TODA la página para que el modal-confirmacion
+         (con el botón type="submit") pueda enviar al backend.
+    ====================================================================== --}}
     <form action="{{ route('cajero.ventas.store') }}" method="POST" id="form-venta" class="flex w-full h-full"
           x-data="{ showModal: false, totalVenta: 0 }" 
           @total-actualizado.window="totalVenta = $event.detail">
         @csrf
-        
+
+        {{-- Input oculto que el JS actualiza con el total calculado --}}
         <input type="hidden" name="total" id="input-total" value="0">
 
+        {{-- ================================================================
+             SIDEBAR NAVEGACIÓN
+        ================================================================ --}}
         <aside class="w-64 bg-white border-r border-gray-200 flex flex-col justify-between h-full shrink-0 z-20">
             <div>
                 <div class="p-6 pb-8 border-b border-gray-50 flex items-center justify-center flex-col text-center">
@@ -56,6 +64,9 @@
             </div>
         </aside>
 
+        {{-- ================================================================
+             SIDEBAR CATEGORÍAS
+        ================================================================ --}}
         <div class="w-60 bg-white border-r border-gray-200 flex flex-col h-full shrink-0 z-10">
             <div class="p-6 pb-2">
                 <h2 class="text-xl font-bold text-gray-900">Categorías</h2>
@@ -76,6 +87,9 @@
             </nav>
         </div>
 
+        {{-- ================================================================
+             ÁREA PRINCIPAL DE PRODUCTOS
+        ================================================================ --}}
         <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f8fafc] relative">
             
             <header class="bg-white border-b border-gray-200 h-[72px] px-8 flex justify-end items-center shrink-0">
@@ -100,7 +114,13 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="contenedor-productos">
                     
                     @forelse($productos as $product)
-                        <div class="producto-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col" data-precio="{{ $product->precio }}">
+                        @php
+                            // Precio vigente: registro de precios_productos con fecha_fin IS NULL
+                            $precioActual = $product->precioActual->precio ?? 0;
+                        @endphp
+
+                        <div class="producto-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col"
+                             data-precio="{{ $precioActual }}">
                             
                             <div class="relative h-40 bg-gray-50 flex items-center justify-center p-4">
                                 @if($product->stock <= 5)
@@ -120,7 +140,8 @@
                                 
                                 <div class="mt-auto">
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="text-lg font-black text-[#0f763e]">${{ number_format($product->precio, 2) }}</span>
+                                        {{-- Precio vigente desde precios_productos --}}
+                                        <span class="text-lg font-black text-[#0f763e]">${{ number_format($precioActual, 2) }}</span>
                                         <span class="text-xs font-medium {{ $product->stock > 5 ? 'text-green-600' : 'text-red-500' }} flex items-center gap-1">
                                             Stock: {{ $product->stock }}
                                         </span>
@@ -134,8 +155,11 @@
                                                    name="productos[{{ $product->id }}][cantidad]" 
                                                    class="input-cantidad w-10 text-center bg-transparent border-none p-0 font-bold text-gray-800 text-sm focus:ring-0" 
                                                    value="0" min="0" max="{{ $product->stock }}" readonly>
-                                                   
-                                            <input type="hidden" name="productos[{{ $product->id }}][precio]" value="{{ $product->precio }}">
+
+                                            {{-- Precio vigente en el momento de la venta --}}
+                                            <input type="hidden" 
+                                                   name="productos[{{ $product->id }}][precio]" 
+                                                   value="{{ $precioActual }}">
 
                                             <button type="button" class="btn-sumar text-gray-400 hover:text-gray-700 w-8 h-8 flex items-center justify-center font-bold text-lg">+</button>
                                         </div>
@@ -152,54 +176,70 @@
                 </div>
             </div>
 
+            {{-- ============================================================
+                 BARRA INFERIOR: Total + Botón Cobrar
+            ============================================================ --}}
             <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-6 flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20">
                 <div>
                     <p class="text-sm text-gray-500 font-bold uppercase tracking-wider mb-1">Total de la Venta</p>
                     <p class="text-4xl font-black text-[#0f763e]" id="display-total-inferior">$0.00</p>
                 </div>
                 
-                <button type="button" @click="if(totalVenta > 0) showModal = true; else alert('Agregue al menos un producto.')" 
+                {{-- Abre el modal SOLO si totalVenta > 0 --}}
+                <button type="button" 
+                        @click="if(totalVenta > 0) showModal = true; else alert('Agregue al menos un producto.')" 
                         class="bg-[#0f763e] text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#0c6132] transition-colors shadow-lg shadow-green-200 flex items-center gap-3 disabled:opacity-50">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     Cobrar / Generar Ticket
                 </button>
             </div>
 
+            {{-- Modal de confirmación (DENTRO del <form> para que type="submit" funcione) --}}
             @include('cajero.ventas.partials.modal-confirmacion')
 
         </main>
     </form>
 
+    {{-- Form de logout independiente --}}
     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
         @csrf
     </form>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const tarjetas = document.querySelectorAll('.producto-card');
+            const tarjetas    = document.querySelectorAll('.producto-card');
             const displayTotal = document.getElementById('display-total-inferior');
-            const inputTotal = document.getElementById('input-total'); // SCRIPT ACTUALIZADO: Captura el input oculto
+            const inputTotal   = document.getElementById('input-total');
+
+            // Variable global accesible también por Alpine.js vía evento
+            window.totalVenta = 0;
 
             function recalcularTotal() {
                 let granTotal = 0;
 
                 tarjetas.forEach(tarjeta => {
-                    const precio = parseFloat(tarjeta.getAttribute('data-precio')) || 0;
+                    // Precio vigente desde data-precio (ya seteado desde precioActual)
+                    const precio   = parseFloat(tarjeta.getAttribute('data-precio')) || 0;
                     const cantidad = parseInt(tarjeta.querySelector('.input-cantidad').value) || 0;
                     granTotal += (precio * cantidad);
                 });
 
+                // Actualizar display visual
                 displayTotal.innerText = '$' + granTotal.toFixed(2);
-                inputTotal.value = granTotal.toFixed(2); // SCRIPT ACTUALIZADO: Asigna el valor al input oculto
 
+                // Actualizar input oculto que se enviará al backend
+                inputTotal.value = granTotal.toFixed(2);
+
+                // Actualizar variable global y disparar evento para Alpine
+                window.totalVenta = granTotal;
                 window.dispatchEvent(new CustomEvent('total-actualizado', { detail: granTotal }));
             }
 
             tarjetas.forEach(tarjeta => {
-                const btnSumar = tarjeta.querySelector('.btn-sumar');
-                const btnRestar = tarjeta.querySelector('.btn-restar');
+                const btnSumar     = tarjeta.querySelector('.btn-sumar');
+                const btnRestar    = tarjeta.querySelector('.btn-restar');
                 const inputCantidad = tarjeta.querySelector('.input-cantidad');
-                const maxStock = parseInt(inputCantidad.getAttribute('max'));
+                const maxStock     = parseInt(inputCantidad.getAttribute('max')) || 0;
 
                 btnSumar.addEventListener('click', () => {
                     let cantActual = parseInt(inputCantidad.value);

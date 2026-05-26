@@ -29,8 +29,8 @@
                 <tr>
                     <td class="px-4 py-2 border">{{ $product->id }}</td>
                     <td class="px-4 py-2 border">{{ $product->nombre }}</td>
-                    <td class="px-4 py-2 border">${{ $product->precio }}</td>
-                    <td class="px-4 py-2 border">{{ $product->cantidad }}</td>
+                    <td class="px-4 py-2 border">${{ number_format($product->precioActual->precio ?? 0, 2) }}</td>
+                    <td class="px-4 py-2 border">{{ $product->stock }}</td>
                     <td class="px-4 py-2 border">
                         @if($product->imagen)
                             <img src="{{ asset('storage/' . $product->imagen) }}" 

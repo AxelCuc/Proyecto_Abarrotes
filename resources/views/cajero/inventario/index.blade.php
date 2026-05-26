@@ -146,7 +146,7 @@
                                         <span class="cat-prod px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold">{{ $producto->categoria->nombre ?? 'General' }}</span>
                                     </td>
                                     <td class="px-8 py-4 whitespace-nowrap text-right">
-                                        <span class="font-black text-gray-900 text-lg">${{ number_format($producto->precio, 2) }}</span>
+                                        <span class="font-black text-gray-900 text-lg">${{ number_format($producto->precioActual->precio ?? 0, 2) }}</span>
                                     </td>
                                     <td class="px-8 py-4 whitespace-nowrap text-center">
                                         <span class="text-base font-black {{ $producto->stock <= 5 ? 'text-red-600' : 'text-gray-900' }}">

@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Abarrotes Don Pepe - Catálogo</title>
-    @vite('resources/css/app.css')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-gray-50 font-sans text-gray-800">
@@ -59,9 +57,12 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10" id="grid-productos">
             @forelse($products as $product)
-                <div class="card-producto bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden relative flex flex-col group hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                @php $precioActual = $product->precioActual->precio ?? 0; @endphp
+                <div class="card-producto bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden relative flex flex-col group hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+                     data-nombre="{{ strtolower($product->nombre) }}"
+                     data-cat="{{ $product->categoria->nombre ?? '' }}">
                     
-                    {{-- Usamos $product->stock para asegurar consistencia con la base de datos --}}
+                    {{-- Badge de stock --}}
                     @if($product->stock > 0 && $product->stock <= 5)
                         <span class="absolute top-4 left-4 bg-red-600 text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg z-10 animate-bounce">
                             ¡ÚLTIMAS {{ $product->stock }} PIEZAS!
@@ -95,7 +96,8 @@
                         
                         <div class="mt-auto pt-4 border-t border-gray-50 flex items-end justify-between">
                             <div class="flex flex-col">
-                                <span class="text-3xl font-black text-gray-900">${{ number_format($product->precio, 2) }}</span>
+                                {{-- Precio vigente desde precios_productos --}}
+                                <span class="text-3xl font-black text-gray-900">${{ number_format($precioActual, 2) }}</span>
                                 <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Precio Unitario</span>
                             </div>
                         </div>
@@ -115,5 +117,40 @@
             <p class="text-gray-400 text-sm mt-2">Calidad y frescura en cada producto.</p>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buscador = document.getElementById('input-buscador');
+            const tarjetas = document.querySelectorAll('.card-producto');
+            const botonesFiltro = document.querySelectorAll('.btn-filtro');
+            let categoriaActual = 'Todos';
+
+            const filtrar = () => {
+                const texto = buscador.value.toLowerCase().trim();
+                tarjetas.forEach(card => {
+                    const nombre = card.dataset.nombre || '';
+                    const cat = card.dataset.cat || '';
+                    const coincideTexto = nombre.includes(texto) || cat.toLowerCase().includes(texto);
+                    const coincideCat = categoriaActual === 'Todos' || cat === categoriaActual;
+                    card.style.display = (coincideTexto && coincideCat) ? '' : 'none';
+                });
+            };
+
+            buscador.addEventListener('input', filtrar);
+
+            botonesFiltro.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    botonesFiltro.forEach(b => {
+                        b.classList.remove('bg-green-600', 'text-white', 'shadow-lg', 'shadow-green-100');
+                        b.classList.add('text-gray-500');
+                    });
+                    btn.classList.add('bg-green-600', 'text-white', 'shadow-lg', 'shadow-green-100');
+                    btn.classList.remove('text-gray-500');
+                    categoriaActual = btn.dataset.cat;
+                    filtrar();
+                });
+            });
+        });
+    </script>
 </body>
 </html>

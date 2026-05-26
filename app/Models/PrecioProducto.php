@@ -5,31 +5,28 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DetalleVenta extends Model
+class PrecioProducto extends Model
 {
     use HasFactory;
 
-    protected $table = 'detalle_ventas';
+    protected $table = 'precios_productos';
     public $timestamps = false;
 
     protected $fillable = [
-        'venta_id',
         'producto_id',
-        'cantidad',
-        'precio_unitario',
-        'subtotal',
+        'precio',
+        'fecha_inicio',
+        'fecha_fin',
+    ];
+
+    protected $casts = [
+        'precio'      => 'decimal:2',
+        'fecha_inicio' => 'datetime',
+        'fecha_fin'    => 'datetime',
     ];
 
     /**
-     * Venta a la que pertenece este detalle.
-     */
-    public function venta()
-    {
-        return $this->belongsTo(Venta::class, 'venta_id');
-    }
-
-    /**
-     * Producto de este detalle.
+     * Producto al que pertenece este precio.
      */
     public function producto()
     {

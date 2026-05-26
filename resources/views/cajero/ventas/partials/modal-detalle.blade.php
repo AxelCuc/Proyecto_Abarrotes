@@ -1,4 +1,5 @@
-<div x-show="showModal" 
+<div @if(isset($ventaDetalle)) x-data="{ showModal: true, ventaDetalle: @json($ventaDetalle) }" @endif
+     x-show="showModal" 
      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
      x-transition:enter="transition ease-out duration-300"
      x-transition:enter-start="opacity-0"
@@ -47,9 +48,14 @@
                         <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
                             <div>
                                 <p class="font-black text-gray-800 text-sm" x-text="item.nombre"></p>
-                                <p class="text-xs text-gray-400 font-bold" x-text="item.cant + ' unidad(es)'"></p>
+                                <p class="text-xs text-gray-400 font-bold">
+                                    <span x-text="item.cant"></span> unidad(es) a $<span x-text="item.precio_unitario"></span>
+                                </p>
                             </div>
-                            <p class="font-black text-gray-900" x-text="'$' + item.precio"></p>
+                            <div class="text-right">
+                                <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Subtotal</p>
+                                <p class="font-black text-gray-900" x-text="'$' + item.subtotal"></p>
+                            </div>
                         </div>
                     </template>
                 </div>
@@ -58,7 +64,7 @@
             <div class="grid grid-cols-2 gap-4">
                 <div class="p-4 rounded-3xl bg-gray-50 border border-gray-100 text-center">
                     <p class="text-[9px] font-black text-gray-400 uppercase mb-1">Método Pago</p>
-                    <p class="font-bold text-gray-800 text-sm capitalize" x-text="ventaDetalle.metodo"></p>
+                    <p class="font-bold text-gray-800 text-sm capitalize" x-text="ventaDetalle.metodo_pago"></p>
                 </div>
                 <div class="p-4 rounded-3xl bg-gray-50 border border-gray-100 text-center">
                     <p class="text-[9px] font-black text-gray-400 uppercase mb-1">Cajero</p>

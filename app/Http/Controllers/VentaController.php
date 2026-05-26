@@ -109,8 +109,23 @@ class VentaController extends Controller
      */
     public function ticket(Venta $venta)
     {
-        $detalles = $venta->detalles; // relación con DetalleVenta
-        return view('cajero.ventas.partials.modal-detalle', compact('venta', 'detalles'));
+        $ventaDetalle = [
+            'id' => $venta->id,
+            'total' => number_format($venta->total, 2),
+            'metodo_pago' => $venta->metodo_pago ?? 'Efectivo',
+            'cajero' => $venta->usuario->nombre ?? 'Cajero',
+            'url_ticket' => route('cajero.ventas.ticket', $venta->id),
+            'productos' => $venta->detalles->map(function($detalle) {
+                return [
+                    'nombre' => $detalle->producto->nombre ?? 'Producto',
+                    'cant' => $detalle->cantidad,
+                    'precio_unitario' => number_format($detalle->precio_unitario, 2),
+                    'subtotal' => number_format($detalle->subtotal, 2)
+                ];
+            })->toArray()
+        ];
+
+        return view('cajero.ventas.partials.modal-detalle', compact('ventaDetalle'));
     }
 
     /**

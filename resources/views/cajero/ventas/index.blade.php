@@ -163,13 +163,14 @@
                                             id: '{{ $venta->id }}',
                                             total: '{{ number_format($venta->total, 2) }}',
                                             fecha: '{{ $venta->created_at->format('d/m/Y H:i') }}',
-                                            metodo: '{{ $venta->metodo_pago ?? 'Efectivo' }}',
+                                            metodo_pago: '{{ $venta->metodo_pago ?? 'Efectivo' }}',
                                             cajero: '{{ addslashes(Auth::user()->nombre) }}',
                                             url_ticket: '{{ route('cajero.ventas.ticket', $venta->id) }}',
                                             productos: {{ $venta->detalles->map(fn($d) => [
                                                 'nombre' => addslashes($d->producto->nombre),
                                                 'cant' => $d->cantidad,
-                                                'precio' => number_format($d->subtotal, 2)
+                                                'precio_unitario' => number_format($d->precio_unitario, 2),
+                                                'subtotal' => number_format($d->subtotal, 2)
                                             ])->toJson() }}
                                         };
                                         showModal = true;

@@ -35,20 +35,9 @@ class VentaController extends Controller
             $categoriaSeleccionada = null;
         } elseif ($id === 'mas-vendidos') {
             // Productos más vendidos dinámicos
-            $productos = Producto::join('detalle_ventas', 'productos.id', '=', 'detalle_ventas.producto_id')
-                ->select('productos.*')
-                ->selectRaw('SUM(detalle_ventas.cantidad) as total_vendidos')
-                ->groupBy(
-                    'productos.id',
-                    'productos.nombre',
-                    'productos.precio',
-                    'productos.stock',
-                    'productos.imagen',
-                    'productos.categoria_id',
-                    'productos.created_at',
-                    'productos.updated_at'
-                )
-                ->orderByDesc('total_vendidos')
+            $productos = Producto::has('detalles')
+                ->withSum('detalles', 'cantidad')
+                ->orderByDesc('detalles_sum_cantidad')
                 ->take(10)
                 ->get();
 

@@ -54,4 +54,12 @@ class Producto extends Model
     {
         return $this->precioActual?->precio ?? 0.0;
     }
+
+    /**
+     * Relación con los detalles de venta (para calcular más vendidos).
+     */
+    public function detalles()
+    {
+        return $this->hasMany(DetalleVenta::class, 'producto_id');
+    }
 }

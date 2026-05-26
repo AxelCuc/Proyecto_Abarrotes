@@ -73,9 +73,14 @@
             </div>
             <nav class="flex-1 overflow-y-auto p-4 space-y-1">
                 
-                <a href="{{ route('cajero.ventas.create', 'todos') }}" 
+                <a href="{{ route('cajero.ventas.categoria', 'todos') }}" 
                    class="flex items-center justify-between px-4 py-2.5 rounded-lg transition-colors {{ is_null($categoriaSeleccionada) ? 'bg-[#0f763e] text-white font-semibold shadow-sm' : 'text-gray-600 hover:bg-gray-50 font-medium' }}">
                     <div class="flex items-center gap-3">Todos</div>
+                </a>
+
+                <a href="{{ route('cajero.ventas.categoria', 'mas-vendidos') }}" 
+                   class="flex items-center justify-between px-4 py-2.5 rounded-lg transition-colors {{ ($categoriaSeleccionada && $categoriaSeleccionada->nombre === 'Más vendidos') ? 'bg-[#0f763e] text-white font-semibold shadow-sm' : 'text-gray-600 hover:bg-gray-50 font-medium' }}">
+                    <div class="flex items-center gap-3">Más vendidos</div>
                 </a>
 
                 @foreach($categorias as $categoria)

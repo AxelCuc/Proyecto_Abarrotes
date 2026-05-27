@@ -1,3 +1,15 @@
+/**
+ * public.js
+ *
+ * Lógica del catálogo público — Vista: public/index.blade.php
+ *
+ * Responsabilidades:
+ *  - Filtrar tarjetas de producto en tiempo real según el texto del buscador.
+ *  - Filtrar por categoría al hacer clic en los botones .btn-filtro.
+ *  - Gestionar el estilo activo/inactivo de los botones de categoría.
+ *
+ * Cargado a través de app.js → @vite(['resources/css/app.css', 'resources/js/app.js'])
+ */
 document.addEventListener('DOMContentLoaded', () => {
     const buscador = document.getElementById('input-buscador');
     const tarjetas = document.querySelectorAll('.card-producto');
@@ -5,13 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let categoriaActual = 'Todos';
 
     const aplicarFiltros = () => {
-        const query = buscador.value.toLowerCase().trim();
+        const texto = buscador.value.toLowerCase().trim();
 
         tarjetas.forEach(card => {
-            const nombre = card.querySelector('.text-nombre-prod').textContent.toLowerCase();
-            const categoria = card.querySelector('.text-cat-prod').textContent.trim();
+            // Los atributos data-nombre y data-cat son renderizados por el Blade
+            const nombre    = card.dataset.nombre || '';
+            const categoria = card.dataset.cat    || '';
 
-            const coincideTexto = nombre.includes(query) || categoria.toLowerCase().includes(query);
+            const coincideTexto     = nombre.includes(texto) || categoria.toLowerCase().includes(texto);
             const coincideCategoria = categoriaActual === 'Todos' || categoria === categoriaActual;
 
             card.style.display = (coincideTexto && coincideCategoria) ? '' : 'none';

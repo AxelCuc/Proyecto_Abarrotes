@@ -118,39 +118,6 @@
         </div>
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const buscador = document.getElementById('input-buscador');
-            const tarjetas = document.querySelectorAll('.card-producto');
-            const botonesFiltro = document.querySelectorAll('.btn-filtro');
-            let categoriaActual = 'Todos';
-
-            const filtrar = () => {
-                const texto = buscador.value.toLowerCase().trim();
-                tarjetas.forEach(card => {
-                    const nombre = card.dataset.nombre || '';
-                    const cat = card.dataset.cat || '';
-                    const coincideTexto = nombre.includes(texto) || cat.toLowerCase().includes(texto);
-                    const coincideCat = categoriaActual === 'Todos' || cat === categoriaActual;
-                    card.style.display = (coincideTexto && coincideCat) ? '' : 'none';
-                });
-            };
-
-            buscador.addEventListener('input', filtrar);
-
-            botonesFiltro.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    botonesFiltro.forEach(b => {
-                        b.classList.remove('bg-green-600', 'text-white', 'shadow-lg', 'shadow-green-100');
-                        b.classList.add('text-gray-500');
-                    });
-                    btn.classList.add('bg-green-600', 'text-white', 'shadow-lg', 'shadow-green-100');
-                    btn.classList.remove('text-gray-500');
-                    categoriaActual = btn.dataset.cat;
-                    filtrar();
-                });
-            });
-        });
-    </script>
+    {{-- El JS de esta vista es gestionado por resources/js/public.js (cargado via app.js) --}}
 </body>
 </html>

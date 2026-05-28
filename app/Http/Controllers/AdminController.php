@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\Venta;
 use App\Models\DetalleVenta;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -22,6 +23,14 @@ class AdminController extends Controller
         $ingresosMes = Venta::whereYear('fecha', $hoy->year)
                             ->whereMonth('fecha', $hoy->month)
                             ->sum('total');
+
+        $ingresosMesAnterior = Venta::whereYear('fecha', $hoy->copy()->subMonth()->year)
+                                    ->whereMonth('fecha', $hoy->copy()->subMonth()->month)
+                                    ->sum('total');
+
+        $porcentajeIngresos = $ingresosMesAnterior > 0 
+            ? (($ingresosMes - $ingresosMesAnterior) / $ingresosMesAnterior) * 100 
+            : ($ingresosMes > 0 ? 100 : 0);
 
         // ── Tarjeta 3: Productos con stock crítico (< 10) ─────────────────
         $productosCriticos = Producto::where('stock', '<', 10)
@@ -71,9 +80,65 @@ class AdminController extends Controller
             'ventasHoy',
             'transaccionesHoy',
             'ingresosMes',
+            'porcentajeIngresos',
             'productosCriticos',
             'ventasPorDia',
             'productosMasVendidos',
         ));
+    }
+
+    public function chartData(Request $request)
+    {
+        $rango = $request->query('rango', 'semana');
+        $fechaFin = Carbon::today()->endOfDay();
+        $fechaInicio = null;
+
+        if ($rango === 'semana') {
+            $fechaInicio = Carbon::today()->subDays(6)->startOfDay();
+        } elseif ($rango === 'mes') {
+            $fechaInicio = Carbon::today()->startOfMonth();
+        } elseif ($rango === 'trimestre') {
+            $fechaInicio = Carbon::today()->firstOfQuarter();
+        } elseif ($rango === 'personalizado') {
+            $start = $request->query('inicio');
+            $end = $request->query('fin');
+            if ($start && $end) {
+                $fechaInicio = Carbon::parse($start)->startOfDay();
+                $fechaFin = Carbon::parse($end)->endOfDay();
+            } else {
+                $fechaInicio = Carbon::today()->subDays(6)->startOfDay();
+            }
+        } else {
+            $fechaInicio = Carbon::today()->subDays(6)->startOfDay();
+        }
+
+        $ventasRaw = Venta::select(
+            DB::raw('DATE(fecha) as dia'),
+            DB::raw('SUM(total) as total')
+        )
+        ->whereBetween('fecha', [$fechaInicio, $fechaFin])
+        ->groupBy('dia')
+        ->orderBy('dia')
+        ->pluck('total', 'dia');
+
+        $ventasPorDia = collect();
+        $diasDiff = $fechaInicio->diffInDays($fechaFin);
+        
+        for ($i = 0; $i <= $diasDiff; $i++) {
+            $fecha = $fechaInicio->copy()->addDays($i);
+            // Si el rango es grande, usar fecha corta, si es corto usar día de la semana
+            $etiqueta = $diasDiff > 14 ? $fecha->format('d/m') : $fecha->locale('es')->isoFormat('ddd');
+            $clave = $fecha->toDateString();
+            $ventasPorDia->put($etiqueta, (float) ($ventasRaw[$clave] ?? 0));
+        }
+
+        // Si el rango es muy grande (> 30 días), no repetir etiquetas para no saturar la gráfica
+        $labels = $ventasPorDia->keys()->toArray();
+        $data = $ventasPorDia->values()->toArray();
+
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data
+        ]);
     }
 }

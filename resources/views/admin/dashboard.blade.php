@@ -21,13 +21,12 @@
     <aside class="w-64 bg-white border-r border-gray-200 flex flex-col h-full shrink-0 z-20">
         <div class="p-6 border-b border-gray-50">
             <h1 class="text-xl font-bold text-[#0f763e] leading-tight">Abarrotes Central</h1>
-            <p class="text-xs text-gray-500 font-medium mt-1">Admin Dashboard</p>
         </div>
 
         <nav class="flex-1 overflow-y-auto py-4 px-4 space-y-1.5 custom-scrollbar">
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-3 bg-[#0f763e] text-white rounded-xl font-medium transition-colors shadow-md shadow-green-100">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                Dashboard
+                Panel de control
             </a>
             <a href="{{ route('admin.productos.index') }}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-[#0f763e] rounded-xl font-medium transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
@@ -113,6 +112,9 @@
                     <span class="text-3xl font-black text-gray-800">
                         ${{ number_format($ingresosMes, 2) }}
                     </span>
+                    <p class="text-xs font-bold mt-2 {{ $porcentajeIngresos >= 0 ? 'text-green-500' : 'text-red-500' }}">
+                        {{ $porcentajeIngresos >= 0 ? '+' : '' }}{{ number_format($porcentajeIngresos, 1) }}% VS MES ANTERIOR
+                    </p>
                 </div>
 
                 {{-- Alertas de inventario --}}
@@ -131,11 +133,24 @@
             {{-- ── Gráficas ───────────────────────────────────────────────── --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
-                {{-- Gráfica de línea: Rendimiento semanal --}}
-                <div class="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-bold text-gray-800 tracking-tight">Rendimiento Semanal</h3>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Ventas en $</span>
+                {{-- Gráfica de línea: Rendimiento Semanal / Personalizado --}}
+                <div class="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 p-6 flex flex-col">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+                        <h3 class="text-lg font-bold text-gray-800 tracking-tight">Rendimiento en Ventas</h3>
+                        <div class="flex flex-col lg:flex-row items-center gap-3">
+                            <select id="rangoVentas" class="text-sm border-gray-200 rounded-lg text-gray-600 focus:ring-[#0f763e] focus:border-[#0f763e] cursor-pointer outline-none">
+                                <option value="semana">Últimos 7 días</option>
+                                <option value="mes">Este mes</option>
+                                <option value="trimestre">Este trimestre</option>
+                                <option value="personalizado">Personalizado</option>
+                            </select>
+                            <div id="fechasPersonalizadas" class="hidden items-center gap-2">
+                                <input type="date" id="fechaInicio" class="text-sm border-gray-200 rounded-lg text-gray-600 focus:ring-[#0f763e] focus:border-[#0f763e] outline-none">
+                                <span class="text-gray-400">-</span>
+                                <input type="date" id="fechaFin" class="text-sm border-gray-200 rounded-lg text-gray-600 focus:ring-[#0f763e] focus:border-[#0f763e] outline-none">
+                                <button id="btnFiltrarFechas" class="bg-[#0f763e] text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-[#0c5d31] transition-colors shadow-sm">Filtrar</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="h-64">
                         <canvas id="chartVentas"></canvas>
@@ -167,7 +182,10 @@
                                             {{ $producto['nombre'] }}
                                         </span>
                                     </div>
-                                    <span class="text-sm font-bold text-gray-800 ml-2">{{ $producto['porcentaje'] }}%</span>
+                                    <div class="text-right">
+                                        <span class="text-sm font-bold text-gray-800 block">{{ $producto['cantidad'] }} ventas</span>
+                                        <span class="text-[10px] font-bold text-gray-400">{{ $producto['porcentaje'] }}% del total</span>
+                                    </div>
                                 </div>
                             @empty
                                 <p class="text-sm text-gray-400 italic">Sin datos de ventas aún.</p>

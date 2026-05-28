@@ -28,6 +28,7 @@ Route::get('/admin/login', function () {
 Route::prefix('admin')->middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard/chart', [AdminController::class, 'chartData'])->name('admin.dashboard.chart');
 
     // CRUD de productos
     Route::resource('productos', ProductController::class)->names([

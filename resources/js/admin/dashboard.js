@@ -12,8 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ── Gráfica de línea: Ventas semanales ────────────────────────────────
     const ctxVentas = document.getElementById('chartVentas');
+    let chartVentasInst = null;
     if (ctxVentas && ventasLabels && ventasData) {
-        new Chart(ctxVentas.getContext('2d'), {
+        chartVentasInst = new Chart(ctxVentas.getContext('2d'), {
             type: 'line',
             data: {
                 labels: ventasLabels,
@@ -96,5 +97,48 @@ document.addEventListener('DOMContentLoaded', function () {
     if (totalEl && productosPorcentajes) {
         const total = productosPorcentajes.reduce((s, v) => s + v, 0);
         totalEl.textContent = total > 0 ? total + '%' : '—';
+    }
+
+    // ── Filtros de Rango de Fechas ─────────────────────────────────────────
+    const rangoSelect = document.getElementById('rangoVentas');
+    const customDates = document.getElementById('fechasPersonalizadas');
+    const fechaInicio = document.getElementById('fechaInicio');
+    const fechaFin = document.getElementById('fechaFin');
+    const btnFiltrar = document.getElementById('btnFiltrarFechas');
+
+    const updateChart = async (url) => {
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            if (chartVentasInst && data.labels && data.data) {
+                chartVentasInst.data.labels = data.labels;
+                chartVentasInst.data.datasets[0].data = data.data;
+                chartVentasInst.update();
+            }
+        } catch (error) {
+            console.error('Error al obtener datos de la gráfica:', error);
+        }
+    };
+
+    if (rangoSelect) {
+        rangoSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (val === 'personalizado') {
+                customDates.classList.remove('hidden');
+                customDates.classList.add('flex');
+            } else {
+                customDates.classList.add('hidden');
+                customDates.classList.remove('flex');
+                updateChart(`/admin/dashboard/chart?rango=${val}`);
+            }
+        });
+    }
+
+    if (btnFiltrar) {
+        btnFiltrar.addEventListener('click', () => {
+            if (fechaInicio.value && fechaFin.value) {
+                updateChart(`/admin/dashboard/chart?rango=personalizado&inicio=${fechaInicio.value}&fin=${fechaFin.value}`);
+            }
+        });
     }
 });

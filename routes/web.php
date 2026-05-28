@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\InventarioController;
@@ -24,12 +25,34 @@ Route::get('/admin/login', function () {
     return view('admin.login');
 })->name('admin.login');
 
-Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard'); 
-})->middleware('auth')->name('admin.dashboard');
+Route::prefix('admin')->middleware('auth')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-// CRUD de productos (solo admin)
-Route::resource('products', ProductController::class)->middleware('auth');
+    // CRUD de productos
+    Route::resource('productos', ProductController::class)->names([
+        'index'   => 'admin.productos.index',
+        'create'  => 'admin.productos.create',
+        'store'   => 'admin.productos.store',
+        'show'    => 'admin.productos.show',
+        'edit'    => 'admin.productos.edit',
+        'update'  => 'admin.productos.update',
+        'destroy' => 'admin.productos.destroy',
+    ]);
+
+    // Ventas (historial completo admin)
+    Route::get('/ventas', [VentaController::class, 'index'])->name('admin.ventas.index');
+
+    // Reportes
+    Route::get('/reportes', function () {
+        return view('admin.reportes.index');
+    })->name('admin.reportes.index');
+
+    // Usuarios y roles
+    Route::get('/usuarios', function () {
+        return view('admin.usuarios.index');
+    })->name('admin.usuarios.index');
+});
 
 // ------------------- CAJERO ------------------- //
 Route::get('/cajero/login', function () {

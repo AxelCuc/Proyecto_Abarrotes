@@ -9,6 +9,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/cajero/ventas-create.js',
                 'resources/js/cajero/inventario.js',
+                'resources/js/admin/dashboard.js',
             ],
             refresh: true,
         }),

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User; // Importamos el modelo correcto
 
 class Venta extends Model
 {
@@ -19,7 +20,7 @@ class Venta extends Model
     ];
 
     /**
-     * Usuario (cajero) que registró la venta.
+     * Usuario (cajero/admin) que registró la venta.
      */
     public function usuario()
     {

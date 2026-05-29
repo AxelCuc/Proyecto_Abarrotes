@@ -67,7 +67,7 @@
 
         {{-- Topbar --}}
         <header class="bg-[#f8fafc] h-[72px] px-8 flex justify-between items-center shrink-0">
-            <h2 class="text-2xl font-black text-gray-800 tracking-tight">Admin Portal</h2>
+            <h2 class="text-2xl font-black text-gray-800 tracking-tight">Panel de Control Administrador</h2>
 
             <div class="flex items-center gap-4">
                 <div class="flex items-center gap-3">

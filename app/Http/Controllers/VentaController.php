@@ -120,8 +120,13 @@ class VentaController extends Controller
     /**
      * Historial de ventas del cajero (Todas las ventas con paginación)
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->routeIs('admin.*')) {
+            $ventas = Venta::latest()->paginate(10);
+            return view('admin.ventas.index', compact('ventas'));
+        }
+
         $ventas = Venta::where('usuario_id', Auth::id())
             ->latest()
             ->paginate(10);

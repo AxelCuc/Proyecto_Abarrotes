@@ -1,0 +1,92 @@
+<div 
+    x-show="openEditModal" 
+    x-cloak
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+>
+    <div 
+        @click.away="openEditModal = false"
+        class="bg-white w-full max-w-[450px] rounded-[2rem] shadow-2xl overflow-hidden relative"
+        x-transition:enter="transition ease-out duration-300 transform"
+        x-transition:enter-start="scale-95 translate-y-4"
+        x-transition:enter-end="scale-100 translate-y-0"
+    >
+        <div class="p-6 pb-0 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-[#0f763e]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                </div>
+                <h2 class="text-xl font-black text-gray-800 leading-tight">Editar Usuario</h2>
+            </div>
+            <button @click="openEditModal = false" class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-full">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <form class="p-6 space-y-4">
+            
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-gray-600 ml-1">Nombre Completo</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </span>
+                    <input type="text" value="Juan Pérez" 
+                           class="w-full pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0f763e] focus:ring-1 focus:ring-[#0f763e] transition-all font-medium text-gray-800">
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-gray-600 ml-1">Correo Electrónico</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </span>
+                    <input type="email" value="juan@example.com" 
+                           class="w-full pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0f763e] focus:ring-1 focus:ring-[#0f763e] transition-all font-medium text-gray-800">
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-gray-600 ml-1">Nueva Contraseña <span class="text-gray-400 font-normal ml-1">(Opcional)</span></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </span>
+                    <input type="password" placeholder="Dejar en blanco para conservar actual" 
+                           class="w-full pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0f763e] focus:ring-1 focus:ring-[#0f763e] transition-all font-medium text-gray-800 placeholder-gray-400">
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-gray-600 ml-1">Rol de Sistema</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>
+                    </span>
+                    <select class="w-full pl-11 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0f763e] focus:ring-1 focus:ring-[#0f763e] transition-all font-medium text-gray-800 appearance-none cursor-pointer">
+                        <option value="admin">Administrador</option>
+                        <option value="cajero" selected>Cajero</option>
+                    </select>
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 pointer-events-none">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex justify-end items-center gap-3 pt-6 mt-2 border-t border-gray-50">
+                <button type="button" @click="openEditModal = false" class="px-5 py-2.5 text-sm font-bold text-[#0f763e] hover:bg-green-50 rounded-xl transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit" class="px-6 py-2.5 bg-[#0f763e] hover:bg-[#0a522b] text-white text-sm font-bold rounded-xl shadow-md shadow-green-100 transition-all">
+                    Actualizar Usuario
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\CajeroController;
+use App\Http\Controllers\UsuarioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,10 +50,16 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         return view('admin.reportes.index');
     })->name('admin.reportes.index');
 
-    // Usuarios y roles
-    Route::get('/usuarios', function () {
-        return view('admin.usuarios.index');
-    })->name('admin.usuarios.index');
+    // Usuarios y roles (ahora con controlador)
+    Route::resource('usuarios', UsuarioController::class)->names([
+        'index'   => 'admin.usuarios.index',
+        'create'  => 'admin.usuarios.create',
+        'store'   => 'admin.usuarios.store',
+        'show'    => 'admin.usuarios.show',
+        'edit'    => 'admin.usuarios.edit',
+        'update'  => 'admin.usuarios.update',
+        'destroy' => 'admin.usuarios.destroy',
+    ]);
 });
 
 // ------------------- CAJERO ------------------- //

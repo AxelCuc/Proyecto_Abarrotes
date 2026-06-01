@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuarios y Roles - Abarrotes Central</title>
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/admin/usuarios.js'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         [x-cloak] { display: none !important; }
@@ -16,7 +16,7 @@
 
 <body 
     class="bg-[#f8fafc] flex h-screen overflow-hidden font-sans text-gray-800"
-    x-data="{ openCreateModal: false }"
+    x-data="usuariosHandler()"
 >
 
     <aside class="w-64 bg-white border-r border-gray-200 flex flex-col h-full shrink-0 z-20">
@@ -67,7 +67,7 @@
                 <div class="flex items-center gap-3">
                     <div class="text-right hidden lg:block">
                         <p class="text-sm font-bold text-gray-800 leading-tight">{{ Auth::user()->nombre ?? 'Admin' }}</p>
-                        <p class="text-xs text-gray-500 italic">Store Manager</p>
+                        <p class="text-xs text-gray-500 italic">{{ Auth::user()->rol->nombre ?? 'Store Manager' }}</p>
                     </div>
                     <div class="w-10 h-10 rounded-full bg-[#0f763e] flex items-center justify-center text-white font-bold uppercase shadow-md border-2 border-white">
                         {{ substr(Auth::user()->nombre ?? 'A', 0, 1) }}
@@ -113,102 +113,78 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100 bg-white">
                             
+                            @foreach($usuarios as $usuario)
                             <tr class="hover:bg-gray-50/50 transition-colors group">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold text-sm shrink-0">
-                                            CM
+                                        @php
+                                            $colors = ['bg-green-100 text-green-700', 'bg-orange-100 text-orange-700', 'bg-blue-100 text-blue-700', 'bg-purple-100 text-purple-700'];
+                                            $colorClass = $colors[$usuario->id % 4];
+                                            $words = explode(" ", $usuario->nombre);
+                                            $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+                                        @endphp
+                                        <div class="w-10 h-10 rounded-full {{ $colorClass }} flex items-center justify-center font-bold text-sm shrink-0">
+                                            {{ $initials }}
                                         </div>
                                         <div>
-                                            <p class="text-sm font-bold text-gray-900">Carlos Mendoza</p>
-                                            <p class="text-xs text-gray-400 mt-0.5">ID: 847291</p>
+                                            <p class="text-sm font-bold text-gray-900">{{ $usuario->nombre }}</p>
+                                            <p class="text-xs text-gray-400 mt-0.5">ID: {{ str_pad($usuario->id, 6, '0', STR_PAD_LEFT) }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <p class="text-sm text-gray-600 font-medium">carlos.m@abarrotescentral.com</p>
+                                    <p class="text-sm text-gray-600 font-medium">{{ $usuario->email }}</p>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#0284c7] text-white">
-                                        Administrador
+                                    @php
+                                        $rolNombre = $usuario->rol->nombre ?? 'N/A';
+                                        $rolLower = strtolower($rolNombre);
+                                        $badgeClass = 'bg-gray-100 text-gray-600 border border-gray-200'; // Default Cajero/Otros
+                                        
+                                        if($rolLower === 'administrador' || $rolLower === 'admin') {
+                                            $badgeClass = 'bg-[#0284c7] text-white border-transparent';
+                                        } elseif($rolLower === 'inventario') {
+                                            $badgeClass = 'bg-purple-100 text-purple-700 border-transparent';
+                                        }
+                                    @endphp
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider {{ $badgeClass }}">
+                                        {{ $rolNombre }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-1.5">
-                                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                                        <span class="text-sm font-medium text-gray-700">Activo</span>
+                                        <div class="w-2 h-2 rounded-full {{ $usuario->activo ? 'bg-green-500' : 'bg-red-500' }}"></div>
+                                        <span class="text-sm font-medium text-gray-700">{{ $usuario->activo ? 'Activo' : 'Inactivo' }}</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right">
                                     <div class="flex justify-end gap-2">
-                                        <button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar Usuario">
+                                        <button @click="editUser({{ $usuario->id }}, '{{ addslashes($usuario->nombre) }}', '{{ $usuario->email }}', '{{ $rolNombre }}')" class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar Usuario">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </button>
-                                        <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar Usuario">
+                                        <button @click="deleteUser({{ $usuario->id }})" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar Usuario">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
+                            @endforeach
 
-                            <tr class="hover:bg-gray-50/50 transition-colors group">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm shrink-0">
-                                            AS
-                                        </div>
-                                        <div>
-                                            <p class="text-sm font-bold text-gray-900">Ana Silva</p>
-                                            <p class="text-xs text-gray-400 mt-0.5">ID: 847292</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <p class="text-sm text-gray-600 font-medium">ana.s@abarrotescentral.com</p>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-gray-100 text-gray-600 border border-gray-200">
-                                        Cajero
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center gap-1.5">
-                                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                                        <span class="text-sm font-medium text-gray-700">Activo</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right">
-                                    <div class="flex justify-end gap-2">
-                                        <button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar Usuario">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                        </button>
-                                        <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar Usuario">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <div class="p-5 border-t border-gray-100 flex items-center justify-between bg-white text-sm">
-                    <span class="text-gray-500 font-medium">Mostrando <span class="font-bold text-gray-900">1</span> a <span class="font-bold text-gray-900">2</span> de <span class="font-bold text-gray-900">24</span> usuarios</span>
-                    <div class="flex gap-1">
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                        </button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-[#0f763e] text-white font-bold">1</button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 font-bold transition-colors">2</button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </button>
-                    </div>
+                <div class="p-5 border-t border-gray-100 bg-white">
+                    {{ $usuarios->links() }}
                 </div>
 
             </div>
         </div>
     </main>
+
+    @include('admin.usuarios.partials.modal-create')
+    @include('admin.usuarios.partials.modal-edit')
+    @include('admin.usuarios.partials.modal-delete')
 
 </body>
 </html>

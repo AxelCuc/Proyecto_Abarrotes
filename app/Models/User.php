@@ -10,6 +10,9 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    /**
+     * Nombre de la tabla asociada al modelo.
+     */
     protected $table = 'usuarios';
 
     /**
@@ -17,7 +20,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'nombre',
-        'correo',
+        'email',     // 🔧 corregido: antes tenías 'correo', debe ser 'email' para coincidir con la validación y autenticación
         'password',
         'rol_id',
     ];
@@ -35,10 +38,11 @@ class User extends Authenticatable
      */
     protected $casts = [
         'password' => 'hashed',
+        'email_verified_at' => 'datetime',
     ];
 
     /**
-     * Obtener el rol asociado al usuario.
+     * Relación: obtener el rol asociado al usuario.
      */
     public function rol()
     {

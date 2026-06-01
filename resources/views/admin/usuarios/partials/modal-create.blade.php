@@ -42,7 +42,7 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     </span>
-                    <input type="text" name="name" required placeholder="Ej. Carlos Mendoza" 
+                    <input type="text" name="nombre" required placeholder="Ej. Carlos Mendoza" 
                            class="w-full pl-11 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-[#0f763e] focus:ring-1 focus:ring-[#0f763e] transition-all font-medium text-gray-800 placeholder-gray-400">
                 </div>
             </div>
@@ -75,11 +75,10 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>
                     </span>
-                    <select name="role" required class="w-full pl-11 pr-10 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-[#0f763e] focus:ring-1 focus:ring-[#0f763e] transition-all font-medium text-gray-800 appearance-none cursor-pointer">
+                    <select name="rol_id" required class="w-full pl-11 pr-10 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-[#0f763e] focus:ring-1 focus:ring-[#0f763e] transition-all font-medium text-gray-800 appearance-none cursor-pointer">
                         <option value="" disabled selected>Selecciona un rol</option>
-                        <option value="admin">Administrador</option>
-                        <option value="cajero">Cajero</option>
-                        <option value="inventario">Inventario</option>
+                        <option value="1">Administrador</option>
+                        <option value="2">Cajero</option>
                     </select>
                     <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 pointer-events-none">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>

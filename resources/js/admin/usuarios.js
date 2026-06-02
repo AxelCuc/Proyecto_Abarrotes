@@ -6,8 +6,13 @@ export default function usuariosHandler() {
         openDeleteModal: false,
 
         // Datos del usuario seleccionado
-        selectedUser: {},
-        selectedUserId: null,
+        selectedUser: {
+            id: null,
+            nombre: '',
+            email: '',
+            rol: '',
+            deleteUrl: ''
+        },
 
         // Abrir modal de edición con datos cargados
         editUser(id, nombre, email, rol) {
@@ -15,9 +20,13 @@ export default function usuariosHandler() {
             this.openEditModal = true;
         },
 
-        // Abrir modal de eliminación con ID del usuario
-        deleteUser(id) {
-            this.selectedUserId = id;
+        // Abrir modal de eliminación con URL correcta
+        deleteUser(id, nombre) {
+            this.selectedUser = { 
+                id: id, 
+                nombre: nombre, 
+                deleteUrl: `/admin/usuarios/${id}` 
+            };
             this.openDeleteModal = true;
         }
     }

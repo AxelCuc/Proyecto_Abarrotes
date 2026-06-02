@@ -32,15 +32,18 @@
                 Esta acción no se puede deshacer.
             </p>
             
-            <form :action="'/admin/usuarios/' + selectedUser.id" method="POST" class="flex gap-4 mt-2">
+            <!-- Usamos selectedUser.deleteUrl para evitar 'undefined' -->
+            <form :action="selectedUser.deleteUrl" method="POST" class="flex gap-4 mt-2">
                 @csrf
                 @method('DELETE')
                 
-                <button type="button" @click="openDeleteModal = false" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-2xl text-sm font-bold transition-colors">
+                <button type="button" @click="openDeleteModal = false" 
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-2xl text-sm font-bold transition-colors">
                     Cancelar
                 </button>
                 
-                <button type="submit" class="flex-1 bg-[#b91c1c] hover:bg-[#991b1b] text-white py-3 rounded-2xl text-sm font-bold shadow-md shadow-red-100 transition-colors">
+                <button type="submit" 
+                        class="flex-1 bg-[#b91c1c] hover:bg-[#991b1b] text-white py-3 rounded-2xl text-sm font-bold shadow-md shadow-red-100 transition-colors">
                     Eliminar
                 </button>
             </form>

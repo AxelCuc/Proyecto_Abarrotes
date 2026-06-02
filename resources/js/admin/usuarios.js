@@ -11,17 +11,19 @@ export default function usuariosHandler() {
             nombre: '',
             email: '',
             rol_id: null,
+            activo: 1, // ✅ nuevo campo para estado
             updateUrl: '',
             deleteUrl: ''
         },
 
         // Abrir modal de edición con datos cargados
-        editUser(id, nombre, email, rol_id) {
+        editUser(id, nombre, email, rol_id, activo) {
             this.selectedUser = { 
                 id: id, 
                 nombre: nombre, 
                 email: email, 
                 rol_id: rol_id, 
+                activo: activo, // ✅ se carga el estado actual
                 updateUrl: `/admin/usuarios/${id}` 
             };
             this.openEditModal = true;

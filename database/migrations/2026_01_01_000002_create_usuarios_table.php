@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('rol_id')
                   ->constrained('roles')
                   ->onDelete('cascade');
+            $table->boolean('activo')->default(true); // ✅ nuevo campo de estado
             $table->rememberToken();
             $table->timestamps();
         });

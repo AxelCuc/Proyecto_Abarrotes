@@ -86,6 +86,32 @@
                 </div>
             </div>
 
+            <div class="space-y-1.5">
+    <label class="text-xs font-bold text-gray-600 ml-1">Estado</label>
+    <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10 9a3 3 0 116 0v2a2 2 0 002 2h-8a2 2 0 002-2V9zM4 15h16v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z"/>
+            </svg>
+        </span>
+        <select name="activo" x-model="selectedUser.activo"
+                class="w-full pl-11 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-sm
+                       focus:outline-none focus:border-[#0f763e] focus:ring-1 focus:ring-[#0f763e]
+                       transition-all font-medium text-gray-800 appearance-none cursor-pointer">
+            <option value="1">Activo</option>
+            <option value="0">Inactivo</option>
+        </select>
+        <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 pointer-events-none">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 9l-7 7-7-7"/>
+            </svg>
+        </span>
+    </div>
+</div>
+
+
             <div class="flex justify-end items-center gap-3 pt-6 mt-2 border-t border-gray-50">
                 <button type="button" @click="openEditModal = false" class="px-5 py-2.5 text-sm font-bold text-[#0f763e] hover:bg-green-50 rounded-xl transition-colors">
                     Cancelar

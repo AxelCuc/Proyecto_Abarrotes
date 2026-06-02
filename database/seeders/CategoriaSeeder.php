@@ -13,6 +13,5 @@ class CategoriaSeeder extends Seeder
         Categoria::create(['nombre' => 'Bebidas']);
         Categoria::create(['nombre' => 'Higiene']);
         Categoria::create(['nombre' => 'Limpieza']);
-        Categoria::create(['nombre' => 'Más vendidos']);
     }
 }

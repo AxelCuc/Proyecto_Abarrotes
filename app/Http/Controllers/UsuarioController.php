@@ -56,27 +56,29 @@ class UsuarioController extends Controller
      * Actualizar usuario
      */
     public function update(Request $request, User $usuario)
-    {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'email'  => 'required|email|unique:usuarios,email,' . $usuario->id,
-            'rol_id' => 'required|exists:roles,id',
-        ]);
+{
+    $request->validate([
+        'nombre' => 'required|string|max:100',
+        'email' => 'required|email|max:100|unique:usuarios,email,' . $usuario->id,
+        'rol_id' => 'required|exists:roles,id',
+        'password' => 'nullable|string|min:6',
+        'activo' => 'required|boolean',
+    ]);
 
-        // Actualizar campos básicos
-        $usuario->nombre = $request->nombre;
-        $usuario->email  = $request->email;
-        $usuario->rol_id = $request->rol_id;
+    $usuario->nombre = $request->nombre;
+    $usuario->email = $request->email;
+    $usuario->rol_id = $request->rol_id;
+    $usuario->activo = $request->activo;
 
-        // Actualizar contraseña solo si se envía
-        if ($request->filled('password')) {
-            $usuario->password = Hash::make($request->password);
-        }
-
-        $usuario->save();
-
-        return redirect()->route('admin.usuarios.index')->with('success', 'Usuario actualizado correctamente.');
+    if ($request->filled('password')) {
+        $usuario->password = bcrypt($request->password);
     }
+
+    $usuario->save();
+
+    return redirect()->route('admin.usuarios.index')->with('success', 'Usuario actualizado correctamente.');
+}
+
 
     /**
      * Eliminar usuario

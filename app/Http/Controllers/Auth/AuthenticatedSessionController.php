@@ -30,6 +30,14 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
+        // 👇 Bloquear si está inactivo
+        if (!$user->activo) {
+            Auth::logout();
+            return back()->withErrors([
+                'email' => 'Tu cuenta está inactiva. Contacta al administrador.',
+            ]);
+        }
+
         $role = strtolower(trim((string)$user->rol->nombre ?? ''));
 
         if (in_array($role, ['admin', 'administrador'])) {
@@ -43,7 +51,6 @@ class AuthenticatedSessionController extends Controller
         // Fallback si no coincide, mostrar qué rol tenía para depurar si falla
         return redirect()->route('home')->with('error', 'Rol no reconocido: ' . $role);
     }
-
 
     /**
      * Destroy an authenticated session.
@@ -59,4 +66,3 @@ class AuthenticatedSessionController extends Controller
         return redirect('/');
     }
 }
-

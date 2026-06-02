@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
 
         // 2. Crear usuarios de prueba
         User::firstOrCreate(
-            ['correo' => 'admin@donpepe.com'],
+            ['email' => 'admin@donpepe.com'],
             [
                 'nombre' => 'Administrador Principal',
                 'password' => Hash::make('password'),
@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         );
 
         User::firstOrCreate(
-            ['correo' => 'cajero@donpepe.com'],
+            ['email' => 'cajero@donpepe.com'],
             [
                 'nombre' => 'Cajero Juan',
                 'password' => Hash::make('password'),
@@ -40,7 +40,6 @@ class DatabaseSeeder extends Seeder
         // 3. Llamar a los seeders de categorías y productos
         $this->call([
             CategoriaSeeder::class,
-            ProductoSeeder::class,
         ]);
     }
 }

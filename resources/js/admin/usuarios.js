@@ -10,13 +10,20 @@ export default function usuariosHandler() {
             id: null,
             nombre: '',
             email: '',
-            rol: '',
+            rol_id: null,
+            updateUrl: '',
             deleteUrl: ''
         },
 
         // Abrir modal de edición con datos cargados
-        editUser(id, nombre, email, rol) {
-            this.selectedUser = { id, nombre, email, rol };
+        editUser(id, nombre, email, rol_id) {
+            this.selectedUser = { 
+                id: id, 
+                nombre: nombre, 
+                email: email, 
+                rol_id: rol_id, 
+                updateUrl: `/admin/usuarios/${id}` 
+            };
             this.openEditModal = true;
         },
 

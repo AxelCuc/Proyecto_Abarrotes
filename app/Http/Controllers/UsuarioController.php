@@ -11,13 +11,23 @@ class UsuarioController extends Controller
     /**
      * Mostrar listado de usuarios con roles
      */
-    public function index()
-    {
-        $usuarios = User::with('rol')->paginate(10);
-        $roles = \App\Models\Role::all(); // ✅ obtenemos todos los roles
-        
-        return view('admin.usuarios.index', compact('usuarios', 'roles'));
+    public function index(Request $request)
+{
+    $query = User::with('rol');
+
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('nombre', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%");
+        });
     }
+
+    $usuarios = $query->paginate(10); // ✅ usa el query filtrado
+    $roles = \App\Models\Role::all();
+
+    return view('admin.usuarios.index', compact('usuarios', 'roles'));
+}
 
     /**
      * Guardar nuevo usuario

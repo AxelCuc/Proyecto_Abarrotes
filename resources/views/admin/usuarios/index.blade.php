@@ -92,13 +92,21 @@
             <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden flex flex-col">
                 
                 <div class="p-5 border-b border-gray-100 flex items-center justify-between">
-                    <div class="relative w-full max-w-sm">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </span>
-                        <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:border-[#0f763e] focus:ring-1 focus:ring-[#0f763e] transition-colors" placeholder="Buscar por nombre o email...">
-                    </div>
-                </div>
+    <form method="GET" action="{{ route('admin.usuarios.index') }}" class="relative w-full max-w-sm">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+        </span>
+        <input type="text" name="search" value="{{ request('search') }}"
+               class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl text-sm
+                      placeholder-gray-400 focus:outline-none focus:border-[#0f763e]
+                      focus:ring-1 focus:ring-[#0f763e] transition-colors"
+               placeholder="Buscar por nombre o email...">
+    </form>
+</div>
+
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">

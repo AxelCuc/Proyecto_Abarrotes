@@ -45,12 +45,16 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     // Ventas (historial completo admin)
     Route::get('/ventas', [VentaController::class, 'index'])->name('admin.ventas.index');
 
+    // ✅ Exportación de ventas
+    Route::get('/ventas/export/excel', [VentaController::class, 'exportExcel'])->name('admin.ventas.export.excel');
+    Route::get('/ventas/export/pdf', [VentaController::class, 'exportPdf'])->name('admin.ventas.export.pdf');
+
     // Reportes
     Route::get('/reportes', function () {
         return view('admin.reportes.index');
     })->name('admin.reportes.index');
 
-    // Usuarios y roles (ahora con controlador)
+    // Usuarios y roles
     Route::resource('usuarios', UsuarioController::class)->names([
         'index'   => 'admin.usuarios.index',
         'create'  => 'admin.usuarios.create',
@@ -67,7 +71,7 @@ Route::get('/cajero/login', function () {
     return view('cajero.login');
 })->name('cajero.login');
 
-// ✅ Dashboard del cajero
+// Dashboard del cajero
 Route::get('/cajero/dashboard', [CajeroController::class, 'dashboard'])
     ->middleware('auth')
     ->name('cajero.dashboard');
@@ -86,7 +90,7 @@ Route::get('/cajero/ventas/categoria/{id}', [VentaController::class, 'porCategor
 Route::get('/cajero/ventas', [VentaController::class, 'index'])
     ->middleware('auth')->name('cajero.ventas.index');
 
-// ✅ Filtro por rango de fechas
+// Filtro por rango de fechas
 Route::get('/cajero/ventas/rango', [VentaController::class, 'filtroRango'])
     ->middleware('auth')
     ->name('cajero.ventas.rango');

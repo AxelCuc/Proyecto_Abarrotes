@@ -7,7 +7,13 @@ use App\Models\Producto;
 use App\Models\Venta;
 use App\Models\DetalleVenta;
 use App\Models\Categoria;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+
+// Librerías para exportación
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\VentasExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class VentaController extends Controller
 {
@@ -18,7 +24,7 @@ class VentaController extends Controller
     {
         $categorias = Categoria::all();
         $productos = Producto::all();
-        $categoriaSeleccionada = null; // siempre definida
+        $categoriaSeleccionada = null;
 
         return view('cajero.ventas.create', compact('categorias','productos','categoriaSeleccionada'));
     }
@@ -34,7 +40,6 @@ class VentaController extends Controller
             $productos = Producto::all();
             $categoriaSeleccionada = null;
         } elseif ($id === 'mas-vendidos') {
-            // Productos más vendidos dinámicos
             $productos = Producto::has('detalles')
                 ->withSum('detalles', 'cantidad')
                 ->orderByDesc('detalles_sum_cantidad')
@@ -57,41 +62,34 @@ class VentaController extends Controller
      * Guardar la venta en BD
      */
     public function store(Request $request)
-{
-    // Crear venta principal
-    $venta = Venta::create([
-        'usuario_id' => Auth::id(),
-        'total'      => $request->input('total'), // viene del input hidden
-    ]);
+    {
+        $venta = Venta::create([
+            'usuario_id' => Auth::id(),
+            'total'      => $request->input('total'),
+        ]);
 
-    // Guardar detalles de productos
-    foreach ($request->input('productos', []) as $productoId => $datos) {
-        $cantidad = $datos['cantidad'] ?? 0;
+        foreach ($request->input('productos', []) as $productoId => $datos) {
+            $cantidad = $datos['cantidad'] ?? 0;
 
-        if ($cantidad > 0) {
-            $producto = Producto::find($productoId);
+            if ($cantidad > 0) {
+                $producto = Producto::find($productoId);
+                $precioUnitario = $producto->precioActual->precio ?? 0;
 
-            // Obtener precio vigente del producto
-            $precioUnitario = $producto->precioActual->precio ?? 0;
+                DetalleVenta::create([
+                    'venta_id'       => $venta->id,
+                    'producto_id'    => $producto->id,
+                    'cantidad'       => $cantidad,
+                    'precio_unitario'=> $precioUnitario,
+                    'subtotal'       => $cantidad * $precioUnitario,
+                ]);
 
-            DetalleVenta::create([
-                'venta_id'       => $venta->id,
-                'producto_id'    => $producto->id,
-                'cantidad'       => $cantidad,
-                'precio_unitario'=> $precioUnitario,
-                'subtotal'       => $cantidad * $precioUnitario,
-            ]);
-
-            // Descontar stock
-            $producto->decrement('stock', $cantidad);
+                $producto->decrement('stock', $cantidad);
+            }
         }
+
+        return redirect()->route('cajero.dashboard')
+                         ->with('success', 'Venta registrada correctamente.');
     }
-
-    // Redirigir al dashboard del cajero con mensaje de éxito
-    return redirect()->route('cajero.dashboard')
-                     ->with('success', 'Venta registrada correctamente.');
-}
-
 
     /**
      * Mostrar ticket de venta
@@ -118,15 +116,51 @@ class VentaController extends Controller
     }
 
     /**
-     * Historial de ventas del cajero (Todas las ventas con paginación)
+     * Historial de ventas (admin o cajero) con filtros
      */
     public function index(Request $request)
     {
         if ($request->routeIs('admin.*')) {
-            $ventas = Venta::latest()->paginate(10);
-            return view('admin.ventas.index', compact('ventas'));
+            $query = Venta::with(['usuario','detalles.producto']);
+
+            // ✅ Filtro por fecha
+            if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
+                $query->whereBetween('created_at', [$request->fecha_inicio, $request->fecha_fin]);
+            }
+
+            // ✅ Filtro por cajero
+            if ($request->filled('cajero_id')) {
+                $query->where('usuario_id', $request->cajero_id);
+            }
+
+            $ventas = $query->latest()->paginate(10);
+
+            // Cajeros (usuarios con rol cajero)
+            $cajeros = User::whereHas('rol', function($q) {
+                $q->where('nombre', 'cajero');
+            })->get();
+
+            // Indicadores rápidos (aplican mismos filtros)
+            $totalVentas = $query->count();
+            $totalIngresos = $query->sum('total');
+            $numTransacciones = $query->count();
+            $productoMasVendido = DetalleVenta::select('producto_id')
+                ->groupBy('producto_id')
+                ->orderByRaw('SUM(cantidad) DESC')
+                ->with('producto')
+                ->first()?->producto->nombre ?? 'N/A';
+
+            return view('admin.ventas.index', compact(
+                'ventas',
+                'cajeros',
+                'totalVentas',
+                'totalIngresos',
+                'numTransacciones',
+                'productoMasVendido'
+            ));
         }
 
+        // Vista del cajero (sin filtros avanzados)
         $ventas = Venta::where('usuario_id', Auth::id())
             ->latest()
             ->paginate(10);
@@ -135,7 +169,7 @@ class VentaController extends Controller
     }
 
     /**
-     * Filtro de ventas por rango de fechas
+     * Filtro de ventas por rango de fechas (cajero)
      */
     public function filtroRango(Request $request)
     {
@@ -154,5 +188,23 @@ class VentaController extends Controller
             'fecha_inicio' => $request->fecha_inicio,
             'fecha_fin' => $request->fecha_fin,
         ]);
+    }
+
+    /**
+     * Exportar ventas a Excel
+     */
+    public function exportExcel()
+    {
+        return Excel::download(new VentasExport, 'ventas.xlsx');
+    }
+
+    /**
+     * Exportar ventas a PDF
+     */
+    public function exportPdf()
+    {
+        $ventas = Venta::with(['usuario','detalles.producto'])->get();
+        $pdf = Pdf::loadView('admin.ventas.pdf', compact('ventas'));
+        return $pdf->download('ventas.pdf');
     }
 }

@@ -48,4 +48,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'rol_id');
     }
+
+    /**
+     * Ventas registradas por este usuario (cajero/admin).
+     */
+    public function ventas()
+    {
+        return $this->hasMany(\App\Models\Venta::class, 'usuario_id');
+    }
 }

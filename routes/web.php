@@ -7,6 +7,7 @@ use App\Http\Controllers\VentaController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\CajeroController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\ReporteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,10 +50,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/ventas/export/excel', [VentaController::class, 'exportExcel'])->name('admin.ventas.export.excel');
     Route::get('/ventas/export/pdf', [VentaController::class, 'exportPdf'])->name('admin.ventas.export.pdf');
 
-    // Reportes
-    Route::get('/reportes', function () {
-        return view('admin.reportes.index');
-    })->name('admin.reportes.index');
+    // ✅ Reportes
+    Route::get('/reportes', [ReporteController::class, 'index'])->name('admin.reportes.index');
+    Route::get('/reportes/export/excel', [ReporteController::class, 'exportExcel'])->name('admin.reportes.export.excel');
+    Route::get('/reportes/export/pdf', [ReporteController::class, 'exportPdf'])->name('admin.reportes.export.pdf');
 
     // Usuarios y roles
     Route::resource('usuarios', UsuarioController::class)->names([

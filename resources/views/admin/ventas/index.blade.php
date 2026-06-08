@@ -58,7 +58,7 @@
     <main class="flex-1 flex flex-col h-full overflow-hidden">
         
         <header class="bg-[#f8fafc] h-[72px] px-8 flex justify-between items-center shrink-0 border-b border-gray-100">
-            <h2 class="text-2xl font-black text-gray-800 tracking-tight hidden md:block">Historial de Ventas</h2>
+            <h2 class="text-2xl font-black text-gray-800 tracking-tight hidden md:block">Panel de Administrador</h2>
             
             <div class="flex items-center gap-4">
                 <div class="flex items-center gap-3">

@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/js/cajero/inventario.js',
                 'resources/js/admin/dashboard.js',
                 'resources/js/admin/products.js',
+                'resources/js/admin/reportes.js',
             ],
             refresh: true,
         }),

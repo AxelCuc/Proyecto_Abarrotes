@@ -152,17 +152,55 @@ class ReporteController extends Controller
             ->pluck('ingresos', 'dia')
             ->toArray();
 
-        $topProductos = $this->productoQuery($request)
-            ->orderByDesc('detalles_count')
+        $topProductos = Producto::select('productos.nombre')
+            ->join('detalle_ventas', 'productos.id', '=', 'detalle_ventas.producto_id')
+            ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
+            ->when($request->filled('fecha_inicio') && $request->filled('fecha_fin'), fn($q) =>
+                $q->whereBetween('ventas.fecha', [$request->fecha_inicio . ' 00:00:00', $request->fecha_fin . ' 23:59:59'])
+            )
+            ->when($request->filled('fecha_inicio') && !$request->filled('fecha_fin'), fn($q) =>
+                $q->where('ventas.fecha', '>=', $request->fecha_inicio . ' 00:00:00')
+            )
+            ->when(!$request->filled('fecha_inicio') && $request->filled('fecha_fin'), fn($q) =>
+                $q->where('ventas.fecha', '<=', $request->fecha_fin . ' 23:59:59')
+            )
+            ->when($request->filled('cajero_id'), fn($q) =>
+                $q->where('ventas.usuario_id', $request->cajero_id)
+            )
+            ->when($request->filled('categoria_id'), fn($q) =>
+                $q->where('productos.categoria_id', $request->categoria_id)
+            )
+            ->selectRaw('SUM(detalle_ventas.cantidad) as total')
+            ->groupBy('productos.nombre')
+            ->orderByDesc('total')
             ->take(5)
-            ->pluck('detalles_count', 'nombre')
+            ->pluck('total', 'productos.nombre')
             ->toArray();
 
-        // Categorías: conteo de productos (opcionalmente filtrado)
-        $categoriasDistribucion = Categoria::withCount($request->filled('categoria_id')
-            ? ['productos' => fn($q) => $q->where('categoria_id', $request->categoria_id)]
-            : 'productos'
-        )->pluck('productos_count', 'nombre')->toArray();
+        // Categorías: suma de unidades vendidas agrupada por categoría
+        $categoriasDistribucion = Categoria::select('categorias.nombre')
+            ->join('productos', 'categorias.id', '=', 'productos.categoria_id')
+            ->join('detalle_ventas', 'productos.id', '=', 'detalle_ventas.producto_id')
+            ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
+            ->when($request->filled('fecha_inicio') && $request->filled('fecha_fin'), fn($q) =>
+                $q->whereBetween('ventas.fecha', [$request->fecha_inicio . ' 00:00:00', $request->fecha_fin . ' 23:59:59'])
+            )
+            ->when($request->filled('fecha_inicio') && !$request->filled('fecha_fin'), fn($q) =>
+                $q->where('ventas.fecha', '>=', $request->fecha_inicio . ' 00:00:00')
+            )
+            ->when(!$request->filled('fecha_inicio') && $request->filled('fecha_fin'), fn($q) =>
+                $q->where('ventas.fecha', '<=', $request->fecha_fin . ' 23:59:59')
+            )
+            ->when($request->filled('cajero_id'), fn($q) =>
+                $q->where('ventas.usuario_id', $request->cajero_id)
+            )
+            ->when($request->filled('categoria_id'), fn($q) =>
+                $q->where('categorias.id', $request->categoria_id)
+            )
+            ->selectRaw('SUM(detalle_ventas.cantidad) as total')
+            ->groupBy('categorias.nombre')
+            ->pluck('total', 'categorias.nombre')
+            ->toArray();
 
         $ventasPorCajero = User::whereHas('rol', fn($q) => $q->where('nombre', 'cajero'))
             ->withCount(['ventas as ventas_count' => function (Builder $q) use ($request) {
@@ -255,16 +293,54 @@ class ReporteController extends Controller
             ->pluck('ingresos', 'dia')
             ->toArray();
 
-        $topProductos = $this->productoQuery($request)
-            ->orderByDesc('detalles_count')
+        $topProductos = Producto::select('productos.nombre')
+            ->join('detalle_ventas', 'productos.id', '=', 'detalle_ventas.producto_id')
+            ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
+            ->when($request->filled('fecha_inicio') && $request->filled('fecha_fin'), fn($q) =>
+                $q->whereBetween('ventas.fecha', [$request->fecha_inicio . ' 00:00:00', $request->fecha_fin . ' 23:59:59'])
+            )
+            ->when($request->filled('fecha_inicio') && !$request->filled('fecha_fin'), fn($q) =>
+                $q->where('ventas.fecha', '>=', $request->fecha_inicio . ' 00:00:00')
+            )
+            ->when(!$request->filled('fecha_inicio') && $request->filled('fecha_fin'), fn($q) =>
+                $q->where('ventas.fecha', '<=', $request->fecha_fin . ' 23:59:59')
+            )
+            ->when($request->filled('cajero_id'), fn($q) =>
+                $q->where('ventas.usuario_id', $request->cajero_id)
+            )
+            ->when($request->filled('categoria_id'), fn($q) =>
+                $q->where('productos.categoria_id', $request->categoria_id)
+            )
+            ->selectRaw('SUM(detalle_ventas.cantidad) as total')
+            ->groupBy('productos.nombre')
+            ->orderByDesc('total')
             ->take(5)
-            ->pluck('detalles_count', 'nombre')
+            ->pluck('total', 'productos.nombre')
             ->toArray();
 
-        $categoriasDistribucion = Categoria::withCount($request->filled('categoria_id')
-            ? ['productos' => fn($q) => $q->where('categoria_id', $request->categoria_id)]
-            : 'productos'
-        )->pluck('productos_count', 'nombre')->toArray();
+        $categoriasDistribucion = Categoria::select('categorias.nombre')
+            ->join('productos', 'categorias.id', '=', 'productos.categoria_id')
+            ->join('detalle_ventas', 'productos.id', '=', 'detalle_ventas.producto_id')
+            ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
+            ->when($request->filled('fecha_inicio') && $request->filled('fecha_fin'), fn($q) =>
+                $q->whereBetween('ventas.fecha', [$request->fecha_inicio . ' 00:00:00', $request->fecha_fin . ' 23:59:59'])
+            )
+            ->when($request->filled('fecha_inicio') && !$request->filled('fecha_fin'), fn($q) =>
+                $q->where('ventas.fecha', '>=', $request->fecha_inicio . ' 00:00:00')
+            )
+            ->when(!$request->filled('fecha_inicio') && $request->filled('fecha_fin'), fn($q) =>
+                $q->where('ventas.fecha', '<=', $request->fecha_fin . ' 23:59:59')
+            )
+            ->when($request->filled('cajero_id'), fn($q) =>
+                $q->where('ventas.usuario_id', $request->cajero_id)
+            )
+            ->when($request->filled('categoria_id'), fn($q) =>
+                $q->where('categorias.id', $request->categoria_id)
+            )
+            ->selectRaw('SUM(detalle_ventas.cantidad) as total')
+            ->groupBy('categorias.nombre')
+            ->pluck('total', 'categorias.nombre')
+            ->toArray();
 
         $ventasPorCajero = User::whereHas('rol', fn($q) => $q->where('nombre', 'cajero'))
             ->withCount(['ventas as ventas_count' => function (Builder $q) use ($request) {

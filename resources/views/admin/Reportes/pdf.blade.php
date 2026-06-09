@@ -192,7 +192,7 @@
         <tr>
             <td>
                 <div class="section-title">Ventas por Día</div>
-                @if($ventasPorDia->isEmpty())
+                @if(empty($ventasPorDia))
                     <div class="empty-note">Sin datos en el período seleccionado.</div>
                 @else
                     <table class="data-table">
@@ -215,7 +215,7 @@
             </td>
             <td>
                 <div class="section-title">Ingresos por Día</div>
-                @if($ingresosPorDia->isEmpty())
+                @if(empty($ingresosPorDia))
                     <div class="empty-note">Sin datos en el período seleccionado.</div>
                 @else
                     <table class="data-table">
@@ -244,7 +244,7 @@
         <tr>
             <td>
                 <div class="section-title">Top 5 Productos</div>
-                @if($topProductos->isEmpty())
+                @if(empty($topProductos))
                     <div class="empty-note">Sin datos de ventas.</div>
                 @else
                     <table class="data-table">
@@ -269,7 +269,7 @@
             </td>
             <td>
                 <div class="section-title">Distribución por Categoría</div>
-                @if($categoriasDistribucion->isEmpty())
+                @if(empty($categoriasDistribucion))
                     <div class="empty-note">Sin categorías registradas.</div>
                 @else
                     <table class="data-table">
@@ -295,7 +295,7 @@
 
     {{-- ── Rendimiento por Cajero ── --}}
     <div class="section-title">Rendimiento por Cajero</div>
-    @if($ventasPorCajero->isEmpty())
+    @if(empty($ventasPorCajero))
         <div class="empty-note">Sin cajeros con ventas registradas.</div>
     @else
         <table class="data-table">

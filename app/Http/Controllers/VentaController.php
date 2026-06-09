@@ -17,9 +17,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class VentaController extends Controller
 {
-    /**
-     * Mostrar formulario para registrar venta (por defecto todos los productos)
-     */
     public function create()
     {
         $categorias = Categoria::all();
@@ -29,9 +26,6 @@ class VentaController extends Controller
         return view('cajero.ventas.create', compact('categorias','productos','categoriaSeleccionada'));
     }
 
-    /**
-     * Filtrar productos por categoría seleccionada
-     */
     public function porCategoria(string $id)
     {
         $categorias = Categoria::all();
@@ -58,9 +52,6 @@ class VentaController extends Controller
         return view('cajero.ventas.create', compact('categorias','productos','categoriaSeleccionada'));
     }
 
-    /**
-     * Guardar la venta en BD
-     */
     public function store(Request $request)
     {
         $venta = Venta::create([
@@ -91,9 +82,6 @@ class VentaController extends Controller
                          ->with('success', 'Venta registrada correctamente.');
     }
 
-    /**
-     * Mostrar ticket de venta
-     */
     public function ticket(Venta $venta)
     {
         $ventaDetalle = [
@@ -115,38 +103,52 @@ class VentaController extends Controller
         return view('cajero.ventas.partials.modal-detalle', compact('ventaDetalle'));
     }
 
-    /**
-     * Historial de ventas (admin o cajero) con filtros
-     */
     public function index(Request $request)
     {
         if ($request->routeIs('admin.*')) {
             $query = Venta::with(['usuario','detalles.producto']);
 
-            // ✅ Filtro por fecha
+            // Filtro por fecha
             if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
-                $query->whereBetween('created_at', [$request->fecha_inicio, $request->fecha_fin]);
+                $query->whereBetween('created_at', [
+                    $request->fecha_inicio . ' 00:00:00',
+                    $request->fecha_fin . ' 23:59:59'
+                ]);
             }
 
-            // ✅ Filtro por cajero
+            // Filtro por cajero
             if ($request->filled('cajero_id')) {
                 $query->where('usuario_id', $request->cajero_id);
             }
 
-            $ventas = $query->latest()->paginate(10);
+            // ✅ Clonar query para KPIs
+            $kpiQuery = clone $query;
 
-            // Cajeros (usuarios con rol cajero)
+            // Paginación con filtros
+            $ventas = $query->latest()->paginate(10)->appends($request->all());
+
+            // Cajeros
             $cajeros = User::whereHas('rol', function($q) {
                 $q->where('nombre', 'cajero');
             })->get();
 
-            // Indicadores rápidos (aplican mismos filtros)
-            $totalVentas = $query->count();
-            $totalIngresos = $query->sum('total');
-            $numTransacciones = $query->count();
+            // KPIs
+            $totalVentas = $kpiQuery->count();
+            $totalIngresos = $kpiQuery->sum('total');
+            $numTransacciones = $kpiQuery->count();
             $productoMasVendido = DetalleVenta::select('producto_id')
+                ->join('ventas','detalle_ventas.venta_id','=','ventas.id')
+                ->when($request->filled('fecha_inicio') && $request->filled('fecha_fin'), function($q) use ($request) {
+                    $q->whereBetween('ventas.created_at', [
+                        $request->fecha_inicio . ' 00:00:00',
+                        $request->fecha_fin . ' 23:59:59'
+                    ]);
+                })
+                ->when($request->filled('cajero_id'), function($q) use ($request) {
+                    $q->where('ventas.usuario_id', $request->cajero_id);
+                })
                 ->groupBy('producto_id')
-                ->orderByRaw('SUM(cantidad) DESC')
+                ->orderByRaw('SUM(detalle_ventas.cantidad) DESC')
                 ->with('producto')
                 ->first()?->producto->nombre ?? 'N/A';
 
@@ -160,7 +162,7 @@ class VentaController extends Controller
             ));
         }
 
-        // Vista del cajero (sin filtros avanzados)
+        // Vista del cajero
         $ventas = Venta::where('usuario_id', Auth::id())
             ->latest()
             ->paginate(10);
@@ -168,9 +170,6 @@ class VentaController extends Controller
         return view('cajero.ventas.index', compact('ventas'));
     }
 
-    /**
-     * Filtro de ventas por rango de fechas (cajero)
-     */
     public function filtroRango(Request $request)
     {
         $request->validate([
@@ -179,9 +178,13 @@ class VentaController extends Controller
         ]);
 
         $ventas = Venta::where('usuario_id', Auth::id())
-            ->whereBetween('created_at', [$request->fecha_inicio, $request->fecha_fin])
+            ->whereBetween('created_at', [
+                $request->fecha_inicio . ' 00:00:00',
+                $request->fecha_fin . ' 23:59:59'
+            ])
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->appends($request->all());
 
         return view('cajero.ventas.index', [
             'ventas' => $ventas,
@@ -190,17 +193,11 @@ class VentaController extends Controller
         ]);
     }
 
-    /**
-     * Exportar ventas a Excel
-     */
     public function exportExcel()
     {
         return Excel::download(new VentasExport, 'ventas.xlsx');
     }
 
-    /**
-     * Exportar ventas a PDF
-     */
     public function exportPdf()
     {
         $ventas = Venta::with(['usuario','detalles.producto'])->get();

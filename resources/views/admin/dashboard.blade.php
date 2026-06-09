@@ -20,7 +20,7 @@
     {{-- ══════════════════ SIDEBAR ══════════════════ --}}
     <aside class="w-64 bg-white border-r border-gray-200 flex flex-col h-full shrink-0 z-20">
         <div class="p-6 border-b border-gray-50">
-            <h1 class="text-xl font-bold text-[#0f763e] leading-tight">Abarrotes Central</h1>
+            <h1 class="text-xl font-bold text-[#0f763e] leading-tight">Tienda Central</h1>
         </div>
 
         <nav class="flex-1 overflow-y-auto py-4 px-4 space-y-1.5 custom-scrollbar">
@@ -68,7 +68,7 @@
                 <div class="flex items-center gap-3">
                     <div class="text-right hidden md:block">
                         <p class="text-sm font-bold text-gray-800 leading-tight">{{ Auth::user()->nombre ?? 'Administrador' }}</p>
-                        <p class="text-xs text-gray-500 italic">Store Manager</p>
+                        <p class="text-xs text-gray-500 italic">Gerente</p>
                     </div>
                     <div class="w-10 h-10 rounded-full bg-[#0f763e] flex items-center justify-center text-white font-bold uppercase shadow-md border-2 border-white">
                         {{ substr(Auth::user()->nombre ?? 'A', 0, 1) }}

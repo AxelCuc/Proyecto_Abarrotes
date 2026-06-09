@@ -39,7 +39,7 @@
                 <div class="bg-green-600 p-2 rounded-xl shadow-md">
                     <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path></svg>
                 </div>
-                <span class="text-[11px] font-black tracking-[0.2em] text-green-700 uppercase mt-1">Don Pepe</span>
+                <span class="text-[11px] font-black tracking-[0.2em] text-green-700 uppercase mt-1">Tienda Central</span>
             </div>
         </div>
 
@@ -114,7 +114,7 @@
 
     <footer class="bg-white py-12 border-t border-gray-100">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <span class="text-green-700 font-black text-2xl tracking-tighter">Abarrotes Don Pepe</span>
+            <span class="text-green-700 font-black text-2xl tracking-tighter">Tienda Central</span>
             <p class="text-gray-400 text-sm mt-2">Calidad y frescura en cada producto.</p>
         </div>
     </footer>

@@ -32,7 +32,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                         </svg>
                     </div>
-                    <h1 class="text-xl font-bold text-[#0f763e] leading-tight">Abarrotes Central</h1>
+                    <h1 class="text-xl font-bold text-[#0f763e] leading-tight">Tienda Central</h1>
                     <p class="text-xs text-gray-400 font-medium mt-1">Terminal #01</p>
                 </div>
 
@@ -100,8 +100,8 @@
             <header class="bg-white border-b border-gray-200 h-[72px] px-8 flex justify-end items-center shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="text-right hidden md:block">
-                        <p class="text-sm font-bold text-gray-800 leading-tight">{{ Auth::user()->nombre ?? 'Cajero' }}</p>
-                        <p class="text-xs text-gray-500">Caja 01</p>
+                        <p class="text-sm font-bold text-gray-800 leading-tight">{{ Auth::user()->nombre }}</p>
+                        <p class="text-xs text-gray-500">Cajero Activo</p>
                     </div>
                     <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold border border-gray-200">
                         {{ substr(Auth::user()->nombre ?? 'C', 0, 1) }}

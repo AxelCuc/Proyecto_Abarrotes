@@ -17,7 +17,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
                 </div>
-                <h1 class="text-xl font-bold text-[#0f763e] leading-tight">Abarrotes Central</h1>
+                <h1 class="text-xl font-bold text-[#0f763e] leading-tight">Tienda Central</h1>
                 <p class="text-xs text-gray-400 font-medium mt-1">Terminal #01</p>
             </div>
 

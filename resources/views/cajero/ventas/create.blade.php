@@ -127,15 +127,19 @@
                         <div class="producto-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col"
                              data-precio="{{ $precioActual }}">
                             
-                            <div class="relative h-40 bg-gray-50 flex items-center justify-center p-4">
+                            <div class="relative h-40 bg-gray-100 overflow-hidden group border-b border-gray-100">
                                 @if($product->stock <= 5)
-                                    <span class="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded">POCO STOCK</span>
+                                    <span class="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm z-10">POCO STOCK</span>
                                 @endif
                                 
                                 @if($product->imagen)
-                                    <img src="{{ asset('storage/' . $product->imagen) }}" alt="{{ $product->nombre }}" class="h-full object-contain">
+                                    <img src="{{ asset('storage/' . $product->imagen) }}" 
+                                         alt="{{ $product->nombre }}" 
+                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 @else
-                                    <div class="w-20 h-20 bg-gray-200 rounded-full opacity-50 flex items-center justify-center text-gray-400">Sin img</div>
+                                    <div class="flex items-center justify-center w-full h-full text-gray-400 text-sm font-medium">
+                                        Sin imagen
+                                    </div>
                                 @endif
                             </div>
 

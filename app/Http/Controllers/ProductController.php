@@ -54,7 +54,7 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('imagen')) {
-            $data['imagen'] = $request->file('imagen')->store('products', 'public');
+            $data['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
 
         $precio = $data['precio'];
@@ -93,7 +93,7 @@ class ProductController extends Controller
             if ($producto->imagen) {
                 Storage::disk('public')->delete($producto->imagen);
             }
-            $data['imagen'] = $request->file('imagen')->store('products', 'public');
+            $data['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
 
         $nuevoPrecio = $data['precio'];

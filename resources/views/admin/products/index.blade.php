@@ -144,11 +144,20 @@
                             <div class="absolute top-3 right-3 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
                         @endif
                         
-                        <div class="h-48 bg-gray-50 flex items-center justify-center p-6 border-b border-gray-50 relative">
+                        <div class="h-48 bg-gray-100 relative overflow-hidden group">
                             @if($isOutStock)
-                                <span class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 text-white text-xs font-black px-3 py-1 rounded uppercase tracking-widest z-10">Agotado</span>
+                                <div class="absolute inset-0 bg-white/40 backdrop-blur-[2px] z-10"></div>
+                                <span class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 text-white text-xs font-black px-3 py-1 rounded uppercase tracking-widest z-20">Agotado</span>
                             @endif
-                            <img src="{{ $producto->imagen ? asset('storage/' . $producto->imagen) : 'https://cdn-icons-png.flaticon.com/512/3739/3739426.png' }}" alt="{{ $producto->nombre }}" class="h-full object-contain {{ $isOutStock ? 'opacity-50' : 'opacity-80' }}">
+                            @if($producto->imagen)
+                                <img src="{{ asset('storage/' . $producto->imagen) }}" 
+                                     alt="{{ $producto->nombre }}" 
+                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 {{ $isOutStock ? 'opacity-50' : 'opacity-90' }}">
+                            @else
+                                <div class="flex items-center justify-center w-full h-full text-gray-400 text-sm font-medium">
+                                    Sin imagen
+                                </div>
+                            @endif
                         </div>
                         
                         <div class="p-5 flex flex-col flex-1">
